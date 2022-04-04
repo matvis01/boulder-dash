@@ -16,7 +16,7 @@ Vector2f GameTile::getPos()
 	return sprite.getPosition();
 }
 
-std::string GameTile::getName()
+Name GameTile::getName()
 {
 	return name;
 }

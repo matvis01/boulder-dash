@@ -15,8 +15,8 @@ Rock::~Rock()
 
 void Rock::SetupVariables()
 {
-	this->name = "Rock";
-	this->textureFile = { "assets\\rock.png" };
+	this->name = Name::rock;
+	this->textureFile =  "assets\\rock.png" ;
 	this->isPassable = 0;
 	this->isMoving = 0;
 }
@@ -101,5 +101,39 @@ bool Rock::fallLeft()
 
 bool Rock::fallRight()
 {
-	return false;
+	if (!isMoving)
+	{
+		std::cout << "not moving left" << std::endl;
+		this->nextSpot = sprite.getPosition().y + tileSize;
+		this->nextSpotSide = sprite.getPosition().x + tileSize;
+		this->isMoving = true;
+		return false;
+	}
+	else
+	{
+		std::cout << "moves left" << std::endl;
+
+		if (sprite.getPosition().x < this->nextSpotSide)
+		{
+			this->sprite.move(2.f, 1 / 2.f);
+		}
+		else
+		{
+			this->sprite.move(0.f, 2.f);
+		}
+
+		if (sprite.getPosition().y >= nextSpot)
+		{
+			this->sprite.setPosition(this->nextSpotSide, this->nextSpot);
+			//this->isMoving = false;
+			std::cout << "on new pos left" << std::endl;
+
+
+			return true;
+		}
+		else
+			return false;
+
+
+	}
 }

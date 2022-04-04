@@ -30,13 +30,33 @@ void Level::setupLevel()
 	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 0;
 	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 6; y = 4;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 5; y = 6;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 6; y = 4;
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 3;
-	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 5; y = 5;
-	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 6;
 	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 7;
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 7; y = 3;
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 7; y = 6;
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 7; y = 7;
+	tiles[x][y] = new Rock(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 7; y = 8;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 6; y = 7;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 6; y = 6;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 8; y = 7;
+	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 8; y = 6;
 	tiles[x][y] = new Ground(x * 80.f + 40.f, y * 80.f + 40.f);
 }
 

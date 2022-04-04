@@ -44,6 +44,8 @@ class Game
 
 	void removeGround();
 
+	void findFallable();
+	bool lastFellLeft;
 
 public:
 	Game();
@@ -52,7 +54,6 @@ public:
 	const bool running() const;
 	void pollEvents();
 
-	void findRock();
 
 	void update();
 	void render();

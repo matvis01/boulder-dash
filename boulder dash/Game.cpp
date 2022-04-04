@@ -44,7 +44,7 @@ bool Game::canMoveLeft()
 
 bool Game::canMoveRight()
 {
-	if (player.playerPosTile.x < level.mapSizeX) // cant go outside of map
+	if (player.playerPosTile.x < level.mapSizeX-1) // cant go outside of map
 	{
 		if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr)
 		{
@@ -84,7 +84,7 @@ bool Game::canMoveUp()
 
 bool Game::canMoveDown()
 {
-	if (player.playerPosTile.y < level.mapSizeY) // cant go outside of map
+	if (player.playerPosTile.y < level.mapSizeY-1) // cant go outside of map
 	{
 		if (this->level.tiles[player.playerPosTile.x][player.playerPosTile.y + 1] != nullptr)
 		{
@@ -162,7 +162,6 @@ void Game::tryViewMove()
 {
 	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y < 1640.f) // dodac konce poziomu (and pos<costam.f)
 	{
-		
 		if (this->player.getPlayerPos().y - 4 * 80.f >= view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y + 320.F;
@@ -194,7 +193,6 @@ void Game::tryViewMove()
 			viewMoveDirection[LEFT] = true;
 			viewIsMoving = true;
 		}
-		
 	}
 }
 
@@ -241,13 +239,25 @@ void Game::removeGround()
 }
 
 
-void Game::findRock()
+void Game::findFallable()
 {
 	for (int i = 0; i < this->level.mapSizeY-1; i++)
 	{
 		for (int j = 0; j < level.mapSizeX-1; j++)
 		{
-			if (level.tiles[j][i] != nullptr and level.tiles[j][i]->getName() == "Rock")
+			if(i >= 1 and level.tiles[j][i - 1] != nullptr and level.tiles[j][i - 1]->getName() == Name::rock and level.tiles[j][i - 1]->getIsMoving())
+			{ // cant fall if one above falls
+				break;
+			}
+			if (i >= 1 and j >= 1 and level.tiles[j-1][i - 1] != nullptr and level.tiles[j-1][i - 1]->getName() == Name::rock and level.tiles[j-1][i - 1]->getIsMoving())
+			{ // cant fall if one above on the left falls
+				break;
+			}
+			if (i >= 1 and j < level.mapSizeX-2 and level.tiles[j + 1][i - 1] != nullptr and level.tiles[j + 1][i - 1]->getName() == Name::rock and level.tiles[j+1][i - 1]->getIsMoving())
+			{ // cant fall if one above on the left falls
+				break;
+			}
+			if (level.tiles[j][i] != nullptr and level.tiles[j][i]->getName() == Name::rock)
 			{
 				if (level.tiles[j][i+1] == nullptr) // falls down
 				{
@@ -255,7 +265,6 @@ void Game::findRock()
 					{
 						std::cout << "player dies !!!!!!!!!!!!!!!!!!!!! \n";
 					}
-
 					if (!(player.playerPosTile.x == j and player.playerPosTile.y == i + 1))
 					{
 
@@ -274,21 +283,102 @@ void Game::findRock()
 						}
 					}
 				}
-				else if (level.tiles[j][i + 1] != nullptr and level.tiles[j][i + 1]->getName() == "Rock")
+				else if (level.tiles[j][i + 1] != nullptr and level.tiles[j][i + 1]->getName() == Name::rock and !level.tiles[j][i+1]->getIsMoving())
 				{
+					
 					if (j >= 1 and level.tiles[j - 1][i] == nullptr and level.tiles[j - 1][i + 1] == nullptr) // left free
 					{
-						if (!(player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1)) // player not blocking left
+						if (j >= 1 and level.tiles[j + 1][i] == nullptr and level.tiles[j + 1][i + 1] == nullptr) //right free
+						{
+						// both sides free
+							if (!(player.playerPosTile.x == j + 1 and player.playerPosTile.y == i or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and !(player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1))
+							{// player not blocking left or right
+
+								if (lastFellLeft) // falls right
+								{
+									if ((player.playerPosTile.x == j + 1 and player.playerPosTile.y == i or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i]->getIsMoving())// gracz umiera
+									{// player on right
+										std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
+									}
+									if (level.tiles[j][i]->fallRight())
+									{
+										if ((player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving()) // should player die
+										{
+											std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
+										}
+										level.tiles[j][i]->changeIsMoving();
+										lastFellLeft = false;
+
+										level.tiles[j + 1][i + 1] = level.tiles[j][i];
+										level.tiles[j][i] = nullptr;
+									}
+
+								}
+								else // falls left
+								{
+									if ((player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i]->getIsMoving())
+									{ // player on left
+										std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
+									}
+									if (level.tiles[j][i]->fallLeft())
+									{
+										if ((player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving())
+										{
+											std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
+										}
+										level.tiles[j][i]->changeIsMoving();
+										lastFellLeft = true;
+
+										level.tiles[j - 1][i + 1] = level.tiles[j][i];
+										level.tiles[j][i] = nullptr;
+									}
+								}
+							}
+							else if (!(player.playerPosTile.x == j + 1 and player.playerPosTile.y == i or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1))
+							{ // player is not on right
+								if (level.tiles[j][i]->fallRight())
+								{
+									if ((player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving()) // should player die
+									{
+										std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
+									}
+									level.tiles[j][i]->changeIsMoving();
+									lastFellLeft = false;
+
+									level.tiles[j + 1][i + 1] = level.tiles[j][i];
+									level.tiles[j][i] = nullptr;
+								}
+							}
+							else if (!(player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1)) // player not blocking left
+							{
+								if ((player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i]->getIsMoving())
+								{ // player on left
+									std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
+								}
+								if (level.tiles[j][i]->fallLeft())
+								{
+									if ((player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving())
+									{
+										std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
+									}
+									level.tiles[j][i]->changeIsMoving();
+									lastFellLeft = true;
+
+									level.tiles[j - 1][i + 1] = level.tiles[j][i];
+									level.tiles[j][i] = nullptr;
+								}
+							}
+						}
+						else if (!(player.playerPosTile.x == j - 1 and player.playerPosTile.y == i or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1)) // player not blocking left
 						{
 							if (level.tiles[j][i]->fallLeft())
 							{
-
 								if ((player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j - 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving())
 								{
 									std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
 								}
-
 								level.tiles[j][i]->changeIsMoving();
+								lastFellLeft = true;
 
 								level.tiles[j - 1][i + 1] = level.tiles[j][i];
 								level.tiles[j][i] = nullptr;
@@ -297,7 +387,28 @@ void Game::findRock()
 						else if(level.tiles[j][i]->getIsMoving())
 							std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
 					}
-					
+					else if (j >= 1 and level.tiles[j + 1][i] == nullptr and level.tiles[j + 1][i + 1] == nullptr)//only right free
+					{
+						if ((player.playerPosTile.x == j + 1 and player.playerPosTile.y == i or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i]->getIsMoving())// gracz umiera
+						{// player on right
+							std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
+						}
+						if (!(player.playerPosTile.x == j + 1 and player.playerPosTile.y == i or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1))
+						{
+							if (level.tiles[j][i]->fallRight())
+							{
+								if ((player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 2 or player.playerPosTile.x == j + 1 and player.playerPosTile.y == i + 1) and level.tiles[j][i] != nullptr and level.tiles[j][i]->getIsMoving()) // should player die
+								{
+									std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
+								}
+								level.tiles[j][i]->changeIsMoving();
+								lastFellLeft = false;
+
+								level.tiles[j + 1][i + 1] = level.tiles[j][i];
+								level.tiles[j][i] = nullptr;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -309,7 +420,7 @@ void Game::update()
 	this->pollEvents();
 	this->player.update(canMoveLeft(),canMoveRight(), canMoveDown(), canMoveUp());
 	removeGround();
-	findRock();
+	findFallable();
 	tryViewMove();
 	moveView();
 }

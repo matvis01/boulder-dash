@@ -40,7 +40,7 @@ Wall::~Wall()
 
 void Wall::SetupVariables()
 {
-	this->name = "Wall";
+	this->name = Name::wall;
 	this->textureFile = { "assets\\wall.png" };
 	this->isPassable = 0;
 }
