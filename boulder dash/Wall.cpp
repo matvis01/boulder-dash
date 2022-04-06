@@ -25,6 +25,11 @@ void Wall::changeIsMoving()
 {
 }
 
+bool Wall::moveSideways(bool movesLeft, float speed)
+{
+	return false;
+}
+
 Wall::Wall(float x, float y)
 {
 	position = Vector2f(x, y);

@@ -16,6 +16,7 @@ public:
     bool fallRight();
     bool getIsMoving();
     void changeIsMoving();
+    bool moveSideways(bool movesLeft, float speed);
 
     Wall(float, float);
     ~Wall();

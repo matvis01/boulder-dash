@@ -45,6 +45,11 @@ Vector2f Player::getPlayerPos()
 	return sprite.getPosition();
 }
 
+float Player::getPlayerSpeed()
+{
+	return movementSpeed;
+}
+
 Player::~Player()
 {
 }
@@ -56,8 +61,6 @@ void Player::movement()
 	{
 		if (direction[LEFT] == true)
 		{
-			//this->sprite.setScale(-1.f, 1.f);
-
 			this->sprite.move(-movementSpeed, 0.f);
 
 			if (this->sprite.getPosition().x <= nextSpot)
@@ -70,8 +73,6 @@ void Player::movement()
 		}
 		if (direction[RIGHT] == true)
 		{
-			//this->sprite.setScale(1.f, 1.f);
-
 			this->sprite.move(movementSpeed, 0.f);
 
 			if (this->sprite.getPosition().x >= nextSpot)
@@ -79,22 +80,17 @@ void Player::movement()
 				this->sprite.setPosition(nextSpot, this->sprite.getPosition().y);
 				isMoving = false;
 				direction[RIGHT] = false;
-
-
 			}
 		}
 		if (direction[UP] == true)
 		{
 			this->sprite.move(0.f,-movementSpeed);
 
-
 			if (this->sprite.getPosition().y <= nextSpot)
 			{
 				this->sprite.setPosition(this->sprite.getPosition().x,nextSpot);
 				isMoving = false;
 				direction[UP] = false;
-
-
 			}
 		}
 		if (direction[DOWN] == true)
@@ -106,8 +102,6 @@ void Player::movement()
 				this->sprite.setPosition(this->sprite.getPosition().x, nextSpot);
 				isMoving = false;
 				direction[DOWN] = false;
-
-
 			}
 		}
 	}

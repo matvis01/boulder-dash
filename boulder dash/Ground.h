@@ -10,6 +10,7 @@ public:
     bool fallRight();
     bool getIsMoving();
     void changeIsMoving();
+    bool moveSideways(bool movesLeft, float speed);
 
     Ground(float, float);
     ~Ground();

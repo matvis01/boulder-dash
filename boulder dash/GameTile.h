@@ -33,6 +33,7 @@ public:
 	virtual bool fallDown() = 0;
 	virtual bool fallLeft() = 0;
 	virtual bool fallRight() = 0;
+	virtual bool moveSideways(bool movesLeft, float speed) = 0;
 
 	Name getName();
 	Vector2f getPos();

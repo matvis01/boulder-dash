@@ -24,7 +24,7 @@ class Player
 
 	bool isMoving;
 	float nextSpot;
-	bool direction[4];
+	
 	Vector2f playerPos;
 
 
@@ -37,10 +37,13 @@ class Player
 
 
 public:
+	bool direction[4];
+
 	float squareSize;
 
 	tilePos playerPosTile;
 	Vector2f getPlayerPos();
+	float getPlayerSpeed();
 	Player();
 	~Player();
 

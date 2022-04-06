@@ -137,3 +137,59 @@ bool Rock::fallRight()
 
 	}
 }
+
+bool Rock::moveSideways(bool movesLeft , float speed)
+{
+	if (movesLeft)
+	{
+		if (!isMoving)
+		{
+			std::cout << "not moving" << std::endl;
+			nextSpot = sprite.getPosition().x - tileSize;
+			this->isMoving = true;
+			return false;
+		}
+		else
+		{
+			std::cout << "moves left" << std::endl;
+			this->sprite.move(-speed, 0.f);
+
+			if (sprite.getPosition().x <= nextSpot)
+			{
+				sprite.setPosition(nextSpot, sprite.getPosition().y);
+				this->isMoving = false;
+				std::cout << "on new pos left" << std::endl;
+
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+	else
+	{
+		if (!isMoving)
+		{
+			std::cout << "not moving" << std::endl;
+			nextSpot = sprite.getPosition().x + tileSize;
+			this->isMoving = true;
+			return false;
+		}
+		else
+		{
+			std::cout << "moves right" << std::endl;
+			this->sprite.move(speed, 0.f);
+
+			if (sprite.getPosition().x >= nextSpot)
+			{
+				sprite.setPosition(nextSpot, sprite.getPosition().y);
+				this->isMoving = false;
+				std::cout << "on new pos right" << std::endl;
+
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+}

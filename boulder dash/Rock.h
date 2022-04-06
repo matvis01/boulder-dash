@@ -22,5 +22,7 @@ public:
     bool fallDown();
     bool fallLeft();
     bool fallRight();
+
+    bool moveSideways(bool movesLeft , float speed);
 };
 

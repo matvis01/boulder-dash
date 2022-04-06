@@ -24,6 +24,11 @@ void Ground::changeIsMoving()
 {
 }
 
+bool Ground::moveSideways(bool movesLeft, float speed)
+{
+	return false;
+}
+
 Ground::Ground(float x, float y)
 {
 	position = Vector2f(x, y);

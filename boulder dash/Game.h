@@ -46,6 +46,7 @@ class Game
 
 	void findFallable();
 	bool lastFellLeft;
+	void tryMoveRockSideways();
 
 public:
 	Game();

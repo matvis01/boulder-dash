@@ -48,8 +48,12 @@ bool Game::canMoveRight()
 	{
 		if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr)
 		{
+			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x + 2][player.playerPosTile.y] == nullptr)
+			{// single rock on right
+				return true;
+			}
 			if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->isPassable == false)
-			{
+			{// not passable on right
 				return false;
 			}
 			else
@@ -156,8 +160,6 @@ void Game::moveView()
 	}
 }
 
-
-
 void Game::tryViewMove()
 {
 	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y < 1640.f) // dodac konce poziomu (and pos<costam.f)
@@ -238,6 +240,28 @@ void Game::removeGround()
 	}
 }
 
+void Game::tryMoveRockSideways()
+{
+	if (level.tiles[player.playerPosTile.x][player.playerPosTile.y] != nullptr and level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::rock)
+	{// player is on a rock
+		if (this->player.direction[LEFT])// player moves left
+		{
+			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
+			{
+				level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
+				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+			}
+		}
+		else if (this->player.direction[RIGHT])//player moves right
+		{
+			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
+			{
+				level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
+				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+			}
+		}
+	}
+}
 
 void Game::findFallable()
 {
@@ -415,12 +439,14 @@ void Game::findFallable()
 	}
 }
 
+
 void Game::update()
 {
 	this->pollEvents();
 	this->player.update(canMoveLeft(),canMoveRight(), canMoveDown(), canMoveUp());
 	removeGround();
 	findFallable();
+	tryMoveRockSideways();
 	tryViewMove();
 	moveView();
 }
