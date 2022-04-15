@@ -28,6 +28,10 @@ bool Game::canMoveLeft()
 	{
 		if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] != nullptr)
 		{
+			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr)
+			{// single rock on left
+				return true;
+			}
 			if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isPassable == false)
 			{
 				return false;
