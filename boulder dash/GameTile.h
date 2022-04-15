@@ -5,10 +5,13 @@
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Audio.hpp"
+#include "Player.h"
 
 using namespace sf;
 
 enum class Name { rock, wall, ground };
+
+
 
 class GameTile
 {
@@ -17,7 +20,7 @@ protected:
 	Texture texture;
 	Sprite sprite;
 	Vector2f position;
-	//tilePos tilePosition;
+
 	std::string textureFile;
 	const float tileSize = 80.f;
 	float nextSpot = 0.f;
@@ -26,6 +29,7 @@ protected:
 
 	void SetupSprite();
 public:
+	tilePos tilePosition;
 	bool isPassable = 0;
 	bool isMoving = 0;
 	virtual bool getIsMoving() = 0;

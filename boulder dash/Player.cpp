@@ -62,10 +62,11 @@ void Player::movement()
 		if (direction[LEFT] == true)
 		{
 			this->sprite.move(-movementSpeed, 0.f);
+			movedLeft = true;
 
 			if (this->sprite.getPosition().x <= nextSpot)
 			{
-
+				
 				this->sprite.setPosition(nextSpot,this->sprite.getPosition().y);
 				isMoving = false;
 				direction[LEFT] = false;
@@ -74,6 +75,7 @@ void Player::movement()
 		if (direction[RIGHT] == true)
 		{
 			this->sprite.move(movementSpeed, 0.f);
+			movedLeft = false;
 
 			if (this->sprite.getPosition().x >= nextSpot)
 			{

@@ -38,7 +38,7 @@ class Player
 
 public:
 	bool direction[4];
-
+	bool movedLeft;
 	float squareSize;
 
 	tilePos playerPosTile;
