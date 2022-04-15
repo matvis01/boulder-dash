@@ -18,7 +18,8 @@ class Level
 public:
 	const static int mapSizeX = 30;
 	const static int mapSizeY = 23;
-	GameTile * tiles[mapSizeX][mapSizeY];
+	std::shared_ptr<GameTile> tiles[mapSizeX][mapSizeY];
+	std::vector <std::shared_ptr<GameTile>> allFallable;
 
 
 	Level();
