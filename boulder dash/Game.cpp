@@ -252,6 +252,7 @@ void Game::tryMoveRockSideways()
 		{
 			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
 			{
+				level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x -= 1;
 				level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
 				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
 			}
@@ -260,6 +261,7 @@ void Game::tryMoveRockSideways()
 		{
 			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
 			{
+				level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x += 1;
 				level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
 				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
 			}

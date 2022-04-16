@@ -12,7 +12,6 @@ using namespace sf;
 enum class Name { rock, wall, ground };
 
 
-
 class GameTile
 {
 protected:
