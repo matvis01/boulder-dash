@@ -32,7 +32,7 @@ bool Game::canMoveLeft()
 			{// single rock on left
 				return true;
 			}
-			if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isPassable == false)
+			if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isPassable)
 			{
 				return true;
 			}
