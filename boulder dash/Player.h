@@ -6,23 +6,16 @@
 #include "SFML/Window.hpp"
 #include "SFML/Audio.hpp"
 //#include "GameTile.h"
-
+#include "functions.h"
 
 using namespace sf;
 
-enum MoveDirection { UP, DOWN, LEFT, RIGHT };
-
-struct tilePos
-{
-	int x;
-	int y;
-};
 
 class Player
 {
 	float movementSpeed;
 
-	bool isMoving;
+
 	float nextSpot;
 	
 	Vector2f playerPos;
@@ -37,6 +30,7 @@ class Player
 
 
 public:
+	bool isMoving;
 	bool direction[4];
 	bool movedLeft;
 	float squareSize;
@@ -47,6 +41,7 @@ public:
 	Player();
 	~Player();
 
+	void setPlayerPos(tilePos);
 	void updateInput(bool, bool, bool, bool);
 	void update(bool, bool, bool, bool);
 	void render(RenderTarget* target);

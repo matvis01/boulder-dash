@@ -1,6 +1,6 @@
-#include "Rock.h"
+#include "Diamond.h"
 
-Rock::Rock(float x, float y)
+Diamond::Diamond(float x, float y)
 {
 	position = Vector2f(x, y);
 
@@ -9,30 +9,30 @@ Rock::Rock(float x, float y)
 	SetupSprite();
 }
 
-Rock::~Rock()
+Diamond::~Diamond()
 {
 }
 
-void Rock::SetupVariables()
+void Diamond::SetupVariables()
 {
-	this->name = Name::rock;
-	this->textureFile =  "assets\\rock.png" ;
-	this->isPassable = 0;
+	this->name = Name::diamond;
+	this->textureFile = "assets\\diamond.png";
+	this->isPassable = 1;
 	this->isMoving = 0;
 	this->movable = 1;
 }
 
-void Rock::changeIsMoving()
+void Diamond::changeIsMoving()
 {
 	this->isMoving = false;
 }
 
-bool Rock::fallDown()// tries to make object fall down
+bool Diamond::fallDown()// tries to make object fall down
 {
 
 	if (!isMoving)
 	{
-		std::cout << "not moving"<<std::endl;
+		std::cout << "not moving" << std::endl;
 		nextSpot = sprite.getPosition().y + tileSize;
 		this->isMoving = true;
 		return false;
@@ -56,12 +56,12 @@ bool Rock::fallDown()// tries to make object fall down
 	}
 }
 
-bool Rock::getIsMoving()
+bool Diamond::getIsMoving()
 {
 	return isMoving;
 }
 
-bool Rock::fallLeft()
+bool Diamond::fallLeft()
 {
 	if (!isMoving)
 	{
@@ -77,7 +77,7 @@ bool Rock::fallLeft()
 
 		if (sprite.getPosition().x > nextSpotSide)
 		{
-			this->sprite.move(-2.f, 1/2.f);
+			this->sprite.move(-2.f, 1 / 2.f);
 		}
 		else
 		{
@@ -95,12 +95,12 @@ bool Rock::fallLeft()
 		}
 		else
 			return false;
-		
+
 
 	}
 }
 
-bool Rock::fallRight()
+bool Diamond::fallRight()
 {
 	if (!isMoving)
 	{
@@ -139,7 +139,7 @@ bool Rock::fallRight()
 	}
 }
 
-bool Rock::moveSideways(bool movesLeft , float speed)
+bool Diamond::moveSideways(bool movesLeft, float speed)
 {
 	if (movesLeft)
 	{
@@ -153,7 +153,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			std::cout << "moves left" << std::endl;
-			this->sprite.move(-(speed+(2/10.f)), 0.f);
+			this->sprite.move(-(speed + (2 / 10.f)), 0.f);
 
 			if (sprite.getPosition().x <= nextSpot)
 			{
@@ -179,7 +179,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			std::cout << "moves right" << std::endl;
-			this->sprite.move(speed+(2 / 10.f), 0.f);
+			this->sprite.move(speed + (2 / 10.f), 0.f);
 
 			if (sprite.getPosition().x >= nextSpot)
 			{

@@ -11,22 +11,35 @@
 #include "Wall.h"
 #include "Ground.h"
 #include "Rock.h"
+#include "Diamond.h"
+#include "EndLvl.h"
+#include "functions.h"
 
 class Level
 {
-	Vector2f playerPos;
+
 public:
-	const static int mapSizeX = 30;
-	const static int mapSizeY = 23;
-	std::shared_ptr<GameTile> tiles[mapSizeX][mapSizeY];
+	int mapSizeX;
+	int mapSizeY;
+	tilePos playerStartingPos;
+
+	std::vector<std::vector<std::shared_ptr<GameTile>>> tiles;
 	std::vector <std::shared_ptr<GameTile>> allFallable;
 
+	int diamondsRequired = 1;
+	int diamondsCollected = 0;
+
+	int currentLevel = 1;
+	int howManyLevels = 2;
 
 	Level();
 	~Level();
 
 	void setupLevel();
+	void level2();
 	void render(RenderTarget* target);
 
+	void clearLevel();
+	void chooseLevel();
 };
 

@@ -28,9 +28,12 @@ bool Game::canMoveLeft()
 	{
 		if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] != nullptr)
 		{
-			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr)
+			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x-1 ][player.playerPosTile.y+1] != nullptr)
 			{// single rock on left
-				return true;
+				if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isMoving)
+					return false;
+				else
+					return true;
 			}
 			if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isPassable)
 			{
@@ -52,9 +55,12 @@ bool Game::canMoveRight()
 	{
 		if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr)
 		{
-			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x + 2][player.playerPosTile.y] == nullptr)
+			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[static_cast<std::vector<std::vector<std::shared_ptr<GameTile>, std::allocator<std::shared_ptr<GameTile>>>, std::allocator<std::vector<std::shared_ptr<GameTile>, std::allocator<std::shared_ptr<GameTile>>>>>::size_type>(player.playerPosTile.x) + 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y + 1] != nullptr)
 			{// single rock on right
-				return true;
+				if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->isMoving)
+					return false;
+				else
+					return true;
 			}
 			if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->isPassable)
 			{// not passable on right
@@ -232,14 +238,37 @@ void Game::pollEvents()
 	}
 }
 
-void Game::removeGround()
+void Game::playerOnGameTile()
 {
 	if (level.tiles[player.playerPosTile.x][player.playerPosTile.y] != nullptr)
 	{
-		if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->isPassable) // add destructor
+		if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::ground)
 		{
-			level.tiles[player.playerPosTile.x][player.playerPosTile.y]->~GameTile();
 			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+		}
+		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::diamond)
+		{
+			level.diamondsCollected += 1;
+			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+		}
+		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::endlvl and level.diamondsCollected >= level.diamondsRequired)
+		{// on EndLvl tile and collected enough diamonds
+			if (level.currentLevel < level.howManyLevels)
+			{// change to next level
+				if (!player.isMoving)
+				{
+					level.currentLevel += 1;
+					level.clearLevel();
+					level.chooseLevel();
+					player.setPlayerPos(level.playerStartingPos);
+					view.setCenter(1280 / 2.f, 960 / 2.f);
+				}
+			}
+			else
+			{
+				std::cout << "game finished" << std::endl;
+			}
+
 		}
 	}
 }
@@ -248,23 +277,40 @@ void Game::tryMoveRockSideways()
 {
 	if (level.tiles[player.playerPosTile.x][player.playerPosTile.y] != nullptr and level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::rock)
 	{// player is on a rock
-		if (this->player.movedLeft)// player moves left
+		if (!level.tiles[player.playerPosTile.x][player.playerPosTile.y]->isMoving)
 		{
-			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
+			if (this->player.movedLeft)// player moves left
 			{
-				level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x -= 1;
-				level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
-				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
+				{
+					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x -= 1;
+					level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
+					level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+				}
+			}
+			else//player moves right
+			{
+				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
+				{
+					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x += 1;
+					level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
+					level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+				}
 			}
 		}
-		else//player moves right
+	}
+}
+
+void Game::keyboardInputs()
+{
+	if (Keyboard::isKeyPressed(Keyboard::R))
+	{
+		if (!viewIsMoving and !player.isMoving)
 		{
-			if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
-			{
-				level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x += 1;
-				level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
-				level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
-			}
+			level.clearLevel();
+			level.chooseLevel();
+			player.setPlayerPos(level.playerStartingPos);
+			view.setCenter(1280 / 2.f, 960 / 2.f);
 		}
 	}
 }
@@ -279,11 +325,11 @@ void Game::findFallable()
 
 		if (x >= 0 and x < level.mapSizeX-1 and y >= 0 and y < level.mapSizeY-1)
 		{
-			if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->getName() == Name::rock and level.tiles[x][y - 1]->getIsMoving()) and !(y >= 1 and x >= 1 and level.tiles[x - 1][y - 1] != nullptr and level.tiles[x - 1][y - 1]->getName() == Name::rock and level.tiles[x - 1][y - 1]->getIsMoving()) and !(y >= 1 and x < level.mapSizeX - 2 and level.tiles[x + 1][y - 1] != nullptr and level.tiles[x + 1][y - 1]->getName() == Name::rock and level.tiles[x + 1][y - 1]->getIsMoving()))
+			if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->movable and level.tiles[x][y - 1]->getIsMoving()) and !(y >= 1 and x >= 1 and level.tiles[x - 1][y - 1] != nullptr and level.tiles[x - 1][y - 1]->movable and level.tiles[x - 1][y - 1]->getIsMoving()) and !(y >= 1 and x < level.mapSizeX - 2 and level.tiles[x + 1][y - 1] != nullptr and level.tiles[x + 1][y - 1]->movable and level.tiles[x + 1][y - 1]->getIsMoving()))
 			{
 
 
-				if (level.tiles[x][y] != nullptr and level.tiles[x][y]->getName() == Name::rock)
+				if (level.tiles[x][y] != nullptr and level.tiles[x][y]->movable)
 				{
 					if (level.tiles[x][y + 1] == nullptr) // falls down
 					{
@@ -313,20 +359,19 @@ void Game::findFallable()
 							}
 						}
 					}
-					else if (level.tiles[x][y + 1] != nullptr and level.tiles[x][y + 1]->getName() == Name::rock and !level.tiles[x][y + 1]->getIsMoving())
+					else if (level.tiles[x][y + 1] != nullptr and level.tiles[x][y + 1]->movable and !level.tiles[x][y + 1]->getIsMoving())
 					{
 
 						if (x >= 1 and level.tiles[x - 1][y] == nullptr and level.tiles[x - 1][y + 1] == nullptr) // left free
 						{
 							if (x >= 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr) //right free
-							{
-								// both sides free
+							{// both sides free
 								if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and !(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1))
 								{// player not blocking left or right
 
 									if (lastFellLeft) // falls right
 									{
-										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving())// gracz umiera
+										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving())// player dies
 										{// player on right
 											std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
 										}
@@ -434,8 +479,8 @@ void Game::findFallable()
 							else if (level.tiles[x][y]->getIsMoving())
 								std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
 						}
-						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr)//only right free
-						{
+						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr)
+						{//only right free
 							if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving())// gracz umiera
 							{// player on right
 								std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
@@ -469,19 +514,20 @@ void Game::findFallable()
 
 void Game::update()
 {
+
 	this->pollEvents();
-	this->player.update(canMoveLeft(),canMoveRight(), canMoveDown(), canMoveUp());
-	removeGround();
-	findFallable();
+	playerOnGameTile();
+	this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
 	tryMoveRockSideways();
 	tryViewMove();
 	moveView();
+	keyboardInputs();
+	findFallable();
 }
 
 void Game::render()
 {
 	this->window->clear();
-	
 	// stuff to render
 	this->window->setView(view);
 	this->level.render(this->window);

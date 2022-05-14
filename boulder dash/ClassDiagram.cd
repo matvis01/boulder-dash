@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Game">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAoQCAACFCAQAAAAAImQMAAJARAAABDUAAA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameTile">
+    <Position X="5.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQIQAEAAAAADQAIAIAABAMAgAABAAFBAAQABE=</HashCode>
+      <FileName>GameTile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ground">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQIAAEAAAIAAAAAAIAAAAAAAAABAAAAAAAECE=</HashCode>
+      <FileName>Ground.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Level">
+    <Position X="9.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BACAQAAAAAAAAAABAAAAAAAAAgIAAAABAAAAAAAYAAA=</HashCode>
+      <FileName>Level.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player">
+    <Position X="11.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAEAAEIAAAACAAAgIAARAAAgAIAAARAQAcABA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rock">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <InheritanceLine Type="GameTile">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="-9.551" Y="-3.729" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQIAAEAAAIAEAAABIAAAAAAAAABAABAAAAAAE=</HashCode>
+      <FileName>Rock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Wall">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQIAAEAAAIAAAAAAIACAAAAAQABAAAAAAAAAE=</HashCode>
+      <FileName>Wall.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diamond">
+    <Position X="6.75" Y="6.5" Width="1.5" />
+    <InheritanceLine Type="GameTile">
+      <InheritanceModifierLabel ManuallyPlaced="true">
+        <Position X="-6.35" Y="-4.452" />
+      </InheritanceModifierLabel>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQIAAEAAAIEAAAAAIAAAAAAgAABAABAAAAAAE=</HashCode>
+      <FileName>Diamond.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="tilePos">
+    <Position X="2.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

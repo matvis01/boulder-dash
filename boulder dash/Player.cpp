@@ -20,7 +20,7 @@ void Player::setSize()
 
 	sprite.setOrigin(Vector2f(40.f, 40.f));
 
-	//this->sprite.setScale(Vector2f(scalex, scaley));
+	//this->sprite.setScale(Vector2f(1.5, 1.5));
 
 }
 
@@ -30,7 +30,7 @@ Player::Player()
 
 	this->sprite.setPosition(playerPos);
 
-	if (!texture.loadFromFile("assets\\amogus.png"))
+	if (!texture.loadFromFile("assets\\player.png"))
 	{
 		std::cout << "could not load player texture";
 	}
@@ -154,6 +154,13 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 			isMoving = true;
 		}
 	}
+}
+
+void Player::setPlayerPos(tilePos startingPos)
+{
+	playerPosTile = startingPos;
+	playerPos = Vector2f(startingPos.x * 80.f + 40.f, startingPos.y * 80.f + 40.f);
+	sprite.setPosition(playerPos);
 }
 
 void Player::update(bool canMoveLeft, bool canMoveRight, bool canMoveDown, bool canMoveUp)

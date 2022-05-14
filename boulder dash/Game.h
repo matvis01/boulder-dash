@@ -42,11 +42,13 @@ class Game
 	void tryViewMove();
 	void moveView();
 
-	void removeGround();
+	void playerOnGameTile();
 
 	void findFallable();
 	bool lastFellLeft;
 	void tryMoveRockSideways();
+
+	void keyboardInputs();
 
 public:
 	Game();

@@ -9,7 +9,7 @@
 
 using namespace sf;
 
-enum class Name { rock, wall, ground };
+
 
 
 class GameTile
@@ -26,9 +26,11 @@ protected:
 	float nextSpotSide = 0.f;
 
 
+
 	void SetupSprite();
 public:
 	tilePos tilePosition;
+	bool movable = 0; 
 	bool isPassable = 0;
 	bool isMoving = 0;
 	virtual bool getIsMoving() = 0;
