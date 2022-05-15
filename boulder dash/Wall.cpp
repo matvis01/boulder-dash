@@ -25,6 +25,11 @@ void Wall::changeIsMoving()
 {
 }
 
+bool Wall::getIsMovingSideways()
+{
+	return false;
+}
+
 bool Wall::moveSideways(bool movesLeft, float speed)
 {
 	return false;

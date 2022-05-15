@@ -20,6 +20,11 @@ bool Ground::getIsMoving()
 	return false;
 }
 
+bool Ground::getIsMovingSideways()
+{
+	return false;
+}
+
 void Ground::changeIsMoving()
 {
 }

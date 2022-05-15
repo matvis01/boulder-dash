@@ -56,6 +56,11 @@ bool Diamond::fallDown()// tries to make object fall down
 	}
 }
 
+bool Diamond::getIsMovingSideways()
+{
+	return false;
+}
+
 bool Diamond::getIsMoving()
 {
 	return isMoving;

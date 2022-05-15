@@ -20,6 +20,7 @@ void Rock::SetupVariables()
 	this->isPassable = 0;
 	this->isMoving = 0;
 	this->movable = 1;
+	this->isMovingSideways = 0;
 }
 
 void Rock::changeIsMoving()
@@ -59,6 +60,11 @@ bool Rock::fallDown()// tries to make object fall down
 bool Rock::getIsMoving()
 {
 	return isMoving;
+}
+
+bool Rock::getIsMovingSideways()
+{
+	return isMovingSideways;
 }
 
 bool Rock::fallLeft()
@@ -143,22 +149,22 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 {
 	if (movesLeft)
 	{
-		if (!isMoving)
+		if (!isMovingSideways)
 		{
 			std::cout << "not moving" << std::endl;
 			nextSpot = sprite.getPosition().x - tileSize;
-			this->isMoving = true;
+			this->isMovingSideways = true;
 			return false;
 		}
 		else
 		{
 			std::cout << "moves left" << std::endl;
-			this->sprite.move(-(speed+(2/10.f)), 0.f);
+			this->sprite.move(-(speed+(15/100.f)), 0.f);
 
 			if (sprite.getPosition().x <= nextSpot)
 			{
 				sprite.setPosition(nextSpot, sprite.getPosition().y);
-				this->isMoving = false;
+				this->isMovingSideways = false;
 				std::cout << "on new pos left" << std::endl;
 
 				return true;
@@ -169,22 +175,22 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 	}
 	else
 	{
-		if (!isMoving)
+		if (!isMovingSideways)
 		{
 			std::cout << "not moving" << std::endl;
 			nextSpot = sprite.getPosition().x + tileSize;
-			this->isMoving = true;
+			this->isMovingSideways = true;
 			return false;
 		}
 		else
 		{
 			std::cout << "moves right" << std::endl;
-			this->sprite.move(speed+(2 / 10.f), 0.f);
+			this->sprite.move(speed+(15 / 100.f), 0.f);
 
 			if (sprite.getPosition().x >= nextSpot)
 			{
 				sprite.setPosition(nextSpot, sprite.getPosition().y);
-				this->isMoving = false;
+				this->isMovingSideways = false;
 				std::cout << "on new pos right" << std::endl;
 
 				return true;

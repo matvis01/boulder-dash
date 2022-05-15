@@ -12,12 +12,14 @@ class Rock :
     public GameTile
 {
     bool isMoving;
+    bool isMovingSideways;
 public:
     Rock(float, float);
     ~Rock();
     void changeIsMoving();
     void SetupVariables();
 
+    bool getIsMovingSideways();
     bool getIsMoving();
     bool fallDown();
     bool fallLeft();

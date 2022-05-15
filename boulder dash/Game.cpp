@@ -30,7 +30,7 @@ bool Game::canMoveLeft()
 		{
 			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x-1 ][player.playerPosTile.y+1] != nullptr)
 			{// single rock on left
-				if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isMoving)
+				if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getIsMoving())
 					return false;
 				else
 					return true;
@@ -53,11 +53,11 @@ bool Game::canMoveRight()
 {
 	if (player.playerPosTile.x < level.mapSizeX-1) // cant go outside of map
 	{
-		if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr)
+		if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr )
 		{
-			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[static_cast<std::vector<std::vector<std::shared_ptr<GameTile>, std::allocator<std::shared_ptr<GameTile>>>, std::allocator<std::vector<std::shared_ptr<GameTile>, std::allocator<std::shared_ptr<GameTile>>>>>::size_type>(player.playerPosTile.x) + 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y + 1] != nullptr)
+			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x + 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y + 1] != nullptr)
 			{// single rock on right
-				if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->isMoving)
+				if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getIsMoving())
 					return false;
 				else
 					return true;
@@ -329,7 +329,7 @@ void Game::findFallable()
 			{
 
 
-				if (level.tiles[x][y] != nullptr and level.tiles[x][y]->movable)
+				if (level.tiles[x][y] != nullptr and !level.tiles[x][y]->getIsMovingSideways())
 				{
 					if (level.tiles[x][y + 1] == nullptr) // falls down
 					{
@@ -514,7 +514,7 @@ void Game::findFallable()
 
 void Game::update()
 {
-
+	findFallable();
 	this->pollEvents();
 	playerOnGameTile();
 	this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
@@ -522,7 +522,7 @@ void Game::update()
 	tryViewMove();
 	moveView();
 	keyboardInputs();
-	findFallable();
+
 }
 
 void Game::render()

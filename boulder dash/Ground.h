@@ -9,6 +9,7 @@ public:
     bool fallLeft();
     bool fallRight();
     bool getIsMoving();
+    bool getIsMovingSideways();
     void changeIsMoving();
     bool moveSideways(bool movesLeft, float speed);
 

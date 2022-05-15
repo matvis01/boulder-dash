@@ -10,6 +10,7 @@ public:
     void changeIsMoving();
     void SetupVariables();
 
+    bool getIsMovingSideways();
     bool getIsMoving();
     bool fallDown();
     bool fallLeft();

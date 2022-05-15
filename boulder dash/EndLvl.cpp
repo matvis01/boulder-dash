@@ -24,6 +24,11 @@ void EndLvl::changeIsMoving()
 {
 }
 
+bool EndLvl::getIsMovingSideways()
+{
+	return false;
+}
+
 bool EndLvl::moveSideways(bool movesLeft, float speed)
 {
 	return false;

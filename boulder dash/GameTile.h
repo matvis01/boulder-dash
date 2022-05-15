@@ -34,11 +34,13 @@ public:
 	bool isPassable = 0;
 	bool isMoving = 0;
 	virtual bool getIsMoving() = 0;
+	virtual bool getIsMovingSideways() = 0;
 	virtual void changeIsMoving() = 0;
 	virtual bool fallDown() = 0;
 	virtual bool fallLeft() = 0;
 	virtual bool fallRight() = 0;
 	virtual bool moveSideways(bool movesLeft, float speed) = 0;
+	virtual ~GameTile() {};
 
 	Name getName();
 	Vector2f getPos();

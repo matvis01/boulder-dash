@@ -10,6 +10,7 @@ public:
     bool fallRight();
     bool getIsMoving();
     void changeIsMoving();
+    bool getIsMovingSideways();
     bool moveSideways(bool movesLeft, float speed);
 
     EndLvl(float, float);
