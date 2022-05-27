@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <filesystem>
 #include<string>
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
@@ -14,6 +15,8 @@
 #include "Diamond.h"
 #include "EndLvl.h"
 #include "functions.h"
+
+namespace fs = std::filesystem;
 
 class Level
 {

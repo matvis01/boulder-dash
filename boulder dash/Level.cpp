@@ -47,6 +47,8 @@ void Level::setupLevel()
 	tiles[x][y] = std::make_shared<Diamond>(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 8; y = 0;
 	tiles[x][y] = std::make_shared<EndLvl>(x * 80.f + 40.f, y * 80.f + 40.f);
+	x = 3; y = 1;
+	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 4;
 	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
 	x = 6; y = 5;

@@ -9,9 +9,6 @@
 
 using namespace sf;
 
-
-
-
 class GameTile
 {
 protected:
@@ -42,7 +39,7 @@ public:
 	virtual bool moveSideways(bool movesLeft, float speed) = 0;
 	virtual ~GameTile() {};
 
-	Name getName();
+	virtual Name getName();
 	Vector2f getPos();
 	float getTileSize();
 	void render(RenderTarget* target);

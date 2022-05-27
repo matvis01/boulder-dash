@@ -159,7 +159,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			std::cout << "moves left" << std::endl;
-			this->sprite.move(-(speed+(15/100.f)), 0.f);
+			this->sprite.move(-(speed+(1/10.f)), 0.f);
 
 			if (sprite.getPosition().x <= nextSpot)
 			{
@@ -185,7 +185,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			std::cout << "moves right" << std::endl;
-			this->sprite.move(speed+(15 / 100.f), 0.f);
+			this->sprite.move(speed+(1 / 10.f), 0.f);
 
 			if (sprite.getPosition().x >= nextSpot)
 			{

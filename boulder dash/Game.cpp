@@ -98,7 +98,7 @@ bool Game::canMoveUp()
 
 bool Game::canMoveDown()
 {
-	if (player.playerPosTile.y < level.mapSizeY-1) // cant go outside of map
+	if (player.playerPosTile.y < level.mapSizeY-2) // cant go outside of map
 	{
 		if (this->level.tiles[player.playerPosTile.x][player.playerPosTile.y + 1] != nullptr)
 		{
@@ -116,10 +116,13 @@ bool Game::canMoveDown()
 		return false;
 }
 
-void Game::initView()
+void Game::initViews()
 {
 	this->view.setSize(1280.f, 960.f);
-	this->view.setCenter(1280 / 2.f, 960 / 2.f);
+	this->view.setCenter(1280 / 2.f, 960 / 2.f - 80);
+
+	this->hudView.setSize(1280.f, 960.f);
+	this->hudView.setCenter(1280 / 2.f, 960 / 2.f);
 }
 
 void Game::moveView()
@@ -172,7 +175,7 @@ void Game::moveView()
 
 void Game::tryViewMove()
 {
-	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y < 1640.f) // dodac konce poziomu (and pos<costam.f)
+	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y <  level.mapSizeY*80.f ) // dodac konce poziomu (and pos<costam.f)
 	{
 		if (this->player.getPlayerPos().y - 4 * 80.f >= view.getCenter().y)
 		{
@@ -212,7 +215,8 @@ Game::Game()
 {
 	this->initVariables();
 	this->initWindow();
-	this->initView();
+	this->initViews();
+	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 }
 
 Game::~Game()
@@ -234,6 +238,19 @@ void Game::pollEvents()
 		if (sfmlEvent.type == Event::KeyPressed)
 		{
 			if (this->sfmlEvent.key.code == Keyboard::Escape) this->window->close();
+
+			if (Keyboard::isKeyPressed(Keyboard::R))
+			{
+				if (!viewIsMoving and !player.isMoving)
+				{
+					level.clearLevel();
+					level.chooseLevel();
+					player.setPlayerPos(level.playerStartingPos);
+					hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
+					hud.updateDiamondAmount();
+					view.setCenter(1280 / 2.f, 960 / 2.f - 80);
+				}
+			}
 		}
 	}
 }
@@ -249,6 +266,8 @@ void Game::playerOnGameTile()
 		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::diamond)
 		{
 			level.diamondsCollected += 1;
+			hud.diamondsCollected += 1;
+			hud.updateDiamondAmount();
 			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
 		}
 		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::endlvl and level.diamondsCollected >= level.diamondsRequired)
@@ -261,7 +280,9 @@ void Game::playerOnGameTile()
 					level.clearLevel();
 					level.chooseLevel();
 					player.setPlayerPos(level.playerStartingPos);
-					view.setCenter(1280 / 2.f, 960 / 2.f);
+					view.setCenter(1280 / 2.f, 960 / 2.f - 80);
+					hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
+					hud.updateDiamondAmount();
 				}
 			}
 			else
@@ -301,19 +322,6 @@ void Game::tryMoveRockSideways()
 	}
 }
 
-void Game::keyboardInputs()
-{
-	if (Keyboard::isKeyPressed(Keyboard::R))
-	{
-		if (!viewIsMoving and !player.isMoving)
-		{
-			level.clearLevel();
-			level.chooseLevel();
-			player.setPlayerPos(level.playerStartingPos);
-			view.setCenter(1280 / 2.f, 960 / 2.f);
-		}
-	}
-}
 
 void Game::findFallable()
 {
@@ -521,7 +529,7 @@ void Game::update()
 	tryMoveRockSideways();
 	tryViewMove();
 	moveView();
-	keyboardInputs();
+	
 
 }
 
@@ -532,6 +540,9 @@ void Game::render()
 	this->window->setView(view);
 	this->level.render(this->window);
 	this->player.render(this->window);
+
+	this->window->setView(hudView);
+	this->hud.render(this->window);
 	//
 	this->window->display();
 }

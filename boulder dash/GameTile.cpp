@@ -29,5 +29,4 @@ float GameTile::getTileSize()
 void GameTile::render(RenderTarget* target)
 {
 	target->draw(this->sprite);
-
 }

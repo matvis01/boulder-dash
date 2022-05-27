@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "GameTile.h"
 #include "Level.h"
+#include "HUD.h"
 
 
 using namespace sf;
@@ -22,12 +23,15 @@ class Game
 	Event sfmlEvent;
 
 	View view;
+	View hudView;
+
 	bool viewIsMoving;
 	float viewNextSpotx, viewNextSpoty;
 	bool viewMoveDirection[4];
 
 	Player player;
 	Level level;
+	HUD hud;
 
 	bool canMoveLeft();
 	bool canMoveRight();
@@ -38,7 +42,7 @@ class Game
 
 	void initWindow();
 
-	void initView();
+	void initViews();
 	void tryViewMove();
 	void moveView();
 
@@ -48,7 +52,6 @@ class Game
 	bool lastFellLeft;
 	void tryMoveRockSideways();
 
-	void keyboardInputs();
 
 public:
 	Game();
