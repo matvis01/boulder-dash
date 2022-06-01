@@ -13,6 +13,7 @@
 
 
 using namespace sf;
+using namespace std;
 
 
 class Game

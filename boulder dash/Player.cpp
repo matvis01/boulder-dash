@@ -72,7 +72,7 @@ void Player::movement()
 				direction[LEFT] = false;
 			}
 		}
-		if (direction[RIGHT] == true)
+		else if (direction[RIGHT] == true)
 		{
 			this->sprite.move(movementSpeed, 0.f);
 			movedLeft = false;
@@ -84,7 +84,7 @@ void Player::movement()
 				direction[RIGHT] = false;
 			}
 		}
-		if (direction[UP] == true)
+		else if (direction[UP] == true)
 		{
 			this->sprite.move(0.f,-movementSpeed);
 
@@ -95,7 +95,7 @@ void Player::movement()
 				direction[UP] = false;
 			}
 		}
-		if (direction[DOWN] == true)
+		else if (direction[DOWN] == true)
 		{
 			this->sprite.move(0.f, movementSpeed);
 

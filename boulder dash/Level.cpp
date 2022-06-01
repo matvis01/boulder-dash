@@ -2,6 +2,19 @@
 
 Level::Level()
 {
+	if (exists(levelsPath))
+	{
+		for (const auto& entry : fs::directory_iterator(levelsPath))
+		{
+			if (entry.exists())
+			{
+				allPaths.push_back(entry);
+				
+			}
+		}
+	}
+	howManyLevels = allPaths.size();
+
 	setupLevel();
 }
 
@@ -12,14 +25,14 @@ Level::~Level()
 
 void Level::setupLevel()
 {
-	this->playerStartingPos = { 0,0 };
-
-	mapSizeX = 30;
-	mapSizeY = 25;
-
 	diamondsCollected = 0;
-	diamondsRequired = 1;
+	diamondsRequired = 0;
 
+	ifstream inputfile(allPaths[this->currentLevel]);
+	string line;
+
+	getline(inputfile, line);
+	istringstream(line) >> mapSizeX >> mapSizeY;
 	for (int i = 0; i < this->mapSizeX; i++)
 	{
 		std::vector <std::shared_ptr<GameTile>> temp;
@@ -31,111 +44,53 @@ void Level::setupLevel()
 		tiles.push_back(temp);
 	}
 
-	int x = 1, y = 0;
-	tiles[x][y] = std::make_shared<Wall>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 2; y = 0;
-	tiles[x][y] = std::make_shared<Wall>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 3; y = 0;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 4; y = 0;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 5; y = 0;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 0;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 0;
-	tiles[x][y] = std::make_shared<Diamond>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 8; y = 0;
-	tiles[x][y] = std::make_shared<EndLvl>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 3; y = 1;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 4;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 5;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 5; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 3;										
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 3;										
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 6;										
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 7;										 
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 7;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 8;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 8; y = 7;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 8; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
+	int x = 0, y = 0;
+	regex re("[|]");
 
-	for (int i = 0; i < this->mapSizeX; i++)
+	while (getline(inputfile, line))
 	{
-		for (int j = 0; j < this->mapSizeY; j++)
+		x = 0;
+
+		for (int i = 0; i < line.length(); i++)
 		{
-			if (tiles[i][j] != nullptr and tiles[i][j]->movable)
+			std::string single = line.substr(i, 1);
+			if (regex_match(single, re))
 			{
-				this->allFallable.push_back(tiles[i][j]);
-				tiles[i][j]->tilePosition.x = i;
-				tiles[i][j]->tilePosition.y = j;
+				if (line[i + 1] == 'p')
+				{
+					this->playerStartingPos = { x,y };
+				}
+				else if (line[i + 1] == 'w')
+				{
+					tiles[x][y] = std::make_shared<Wall>(x * 80.f + 40.f, y * 80.f + 40.f);
+				}
+				else if (line[i + 1] == 'd')
+				{
+					tiles[x][y] = std::make_shared<Diamond>(x * 80.f + 40.f, y * 80.f + 40.f);
+					diamondsRequired++;
+				}
+				else if (line[i + 1] == 'e')
+				{
+					tiles[x][y] = std::make_shared<EndLvl>(x * 80.f + 40.f, y * 80.f + 40.f);
+				}
+				else if (line[i + 1] == 'g')
+				{
+					tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
+				}
+				else if (line[i + 1] == 'r')
+				{
+					tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
+				}
+
+				x++;
 			}
+			
 		}
+		y++;
 	}
 
-}
-
-void Level::level2()
-{
-	this->playerStartingPos = { 1,0 };
-
-	mapSizeX = 30;
-	mapSizeY = 25;
-
-	diamondsCollected = 0;
-	diamondsRequired = 1;
-
-	for (int i = 0; i < this->mapSizeX; i++)
-	{
-		std::vector <std::shared_ptr<GameTile>> temp;
-
-		for (int j = 0; j < this->mapSizeY; j++)
-		{
-			temp.push_back(nullptr);
-		}
-		tiles.push_back(temp);
-	}
-
-	int x = 6, y = 0;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 0;
-	tiles[x][y] = std::make_shared<Diamond>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 4;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 5; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 3;
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 3;
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 6;
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 7;
-	tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 7;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 7; y = 8;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 6; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 8; y = 7;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
-	x = 8; y = 6;
-	tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
+	/*mapSizeX = tiles[0].size();
+	mapSizeY = tiles.size();*/
 
 	for (int i = 0; i < this->mapSizeX; i++)
 	{
@@ -174,12 +129,4 @@ void Level::clearLevel()
 		tiles[i].clear();
 	}
 	tiles.clear();
-}
-
-void Level::chooseLevel()
-{
-	if (currentLevel == 1)
-		setupLevel();  // change to lvl 1
-	if (currentLevel == 2)
-		level2();
 }

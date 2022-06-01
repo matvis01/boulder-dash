@@ -32,22 +32,17 @@ bool Diamond::fallDown()// tries to make object fall down
 
 	if (!isMoving)
 	{
-		std::cout << "not moving" << std::endl;
 		nextSpot = sprite.getPosition().y + tileSize;
 		this->isMoving = true;
 		return false;
 	}
 	else
 	{
-		std::cout << "moves" << std::endl;
 		this->sprite.move(0.f, 2.f);
 
 		if (sprite.getPosition().y >= nextSpot)
 		{
 			sprite.setPosition(sprite.getPosition().x, nextSpot);
-			//this->isMoving = false;
-			std::cout << "on new pos" << std::endl;
-
 
 			return true;
 		}
@@ -70,7 +65,6 @@ bool Diamond::fallLeft()
 {
 	if (!isMoving)
 	{
-		std::cout << "not moving left" << std::endl;
 		this->nextSpot = sprite.getPosition().y + tileSize;
 		this->nextSpotSide = sprite.getPosition().x - tileSize;
 		this->isMoving = true;
@@ -78,7 +72,6 @@ bool Diamond::fallLeft()
 	}
 	else
 	{
-		std::cout << "moves left" << std::endl;
 
 		if (sprite.getPosition().x > nextSpotSide)
 		{
@@ -92,9 +85,6 @@ bool Diamond::fallLeft()
 		if (sprite.getPosition().y >= nextSpot)
 		{
 			this->sprite.setPosition(nextSpotSide, nextSpot);
-			//this->isMoving = false;
-			std::cout << "on new pos left" << std::endl;
-
 
 			return true;
 		}
@@ -109,7 +99,6 @@ bool Diamond::fallRight()
 {
 	if (!isMoving)
 	{
-		std::cout << "not moving left" << std::endl;
 		this->nextSpot = sprite.getPosition().y + tileSize;
 		this->nextSpotSide = sprite.getPosition().x + tileSize;
 		this->isMoving = true;
@@ -117,7 +106,6 @@ bool Diamond::fallRight()
 	}
 	else
 	{
-		std::cout << "moves left" << std::endl;
 
 		if (sprite.getPosition().x < this->nextSpotSide)
 		{
@@ -131,9 +119,6 @@ bool Diamond::fallRight()
 		if (sprite.getPosition().y >= nextSpot)
 		{
 			this->sprite.setPosition(this->nextSpotSide, this->nextSpot);
-			//this->isMoving = false;
-			std::cout << "on new pos left" << std::endl;
-
 
 			return true;
 		}
@@ -150,21 +135,18 @@ bool Diamond::moveSideways(bool movesLeft, float speed)
 	{
 		if (!isMoving)
 		{
-			std::cout << "not moving" << std::endl;
 			nextSpot = sprite.getPosition().x - tileSize;
 			this->isMoving = true;
 			return false;
 		}
 		else
 		{
-			std::cout << "moves left" << std::endl;
 			this->sprite.move(-(speed + (2 / 10.f)), 0.f);
 
 			if (sprite.getPosition().x <= nextSpot)
 			{
 				sprite.setPosition(nextSpot, sprite.getPosition().y);
 				this->isMoving = false;
-				std::cout << "on new pos left" << std::endl;
 
 				return true;
 			}
@@ -176,21 +158,18 @@ bool Diamond::moveSideways(bool movesLeft, float speed)
 	{
 		if (!isMoving)
 		{
-			std::cout << "not moving" << std::endl;
 			nextSpot = sprite.getPosition().x + tileSize;
 			this->isMoving = true;
 			return false;
 		}
 		else
 		{
-			std::cout << "moves right" << std::endl;
 			this->sprite.move(speed + (2 / 10.f), 0.f);
 
 			if (sprite.getPosition().x >= nextSpot)
 			{
 				sprite.setPosition(nextSpot, sprite.getPosition().y);
 				this->isMoving = false;
-				std::cout << "on new pos right" << std::endl;
 
 				return true;
 			}

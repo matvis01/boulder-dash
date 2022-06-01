@@ -1,7 +1,7 @@
 #pragma once
 #include "functions.h"
 #include <iostream>
-#include<string>
+#include <string>
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
