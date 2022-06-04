@@ -22,8 +22,6 @@ protected:
 	float nextSpot = 0.f;
 	float nextSpotSide = 0.f;
 
-
-
 	void SetupSprite();
 public:
 	tilePos tilePosition;

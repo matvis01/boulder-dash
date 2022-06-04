@@ -1,7 +1,5 @@
 #include "Game.h"
 
-
-
 void Game::initVariables()
 {
 	this->endGame = false;
@@ -20,6 +18,37 @@ void Game::initWindow()
 	this->window->setFramerateLimit(144);
 }
 
+void Game::canPushtoTrue()
+{
+	Time t = seconds(0.5f);
+	
+	while (t > clock.getElapsedTime())
+	{
+		waiting = true;
+	}
+	waiting = false;
+	canPush = true;
+}
+
+void Game::CantPushAfterStop()
+{
+	if (player.playerPosTile.x < level.mapSizeX - 1 and player.playerPosTile.x > 0) // cant go outside of map
+	{
+		if (level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] != nullptr and player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x + 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y + 1] != nullptr)
+		{// single rock on right
+		}
+		else if (level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] != nullptr and player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y + 1] != nullptr)
+		{// single rock on left
+		}
+		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]!=nullptr)
+		{// player pushing a rock
+		}
+		else
+		{
+			canPush = false;
+		}
+	}
+}
 
 
 bool Game::canMoveLeft()
@@ -33,7 +62,17 @@ bool Game::canMoveLeft()
 				if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getIsMoving())
 					return false;
 				else
-					return true;
+				{
+					if (canPush)
+					{
+						return true;
+					}
+					else if (!waiting)
+					{
+						clock.restart();
+						threadToTrue.launch();
+					}
+				}
 			}
 			if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->isPassable)
 			{
@@ -60,7 +99,17 @@ bool Game::canMoveRight()
 				if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getIsMoving())
 					return false;
 				else
-					return true;
+				{
+					if (canPush)
+					{
+						return true;
+					}
+					else if (!waiting)
+					{
+						clock.restart();
+						threadToTrue.launch();
+					}
+				}
 			}
 			if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->isPassable)
 			{// not passable on right
@@ -308,6 +357,9 @@ void Game::tryMoveRockSideways()
 			{
 				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
 				{
+					clock.restart();
+					//threadToFalse.launch();
+					canPush = true;
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x -= 1;
 					level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
@@ -317,6 +369,9 @@ void Game::tryMoveRockSideways()
 			{
 				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
 				{
+					clock.restart();
+					/*threadToFalse.launch();*/
+					canPush = true;
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x += 1;
 					level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
@@ -548,7 +603,7 @@ void Game::update()
 	tryMoveRockSideways();
 	tryViewMove();
 	moveView();
-	
+	CantPushAfterStop();
 
 }
 
@@ -559,7 +614,6 @@ void Game::render()
 	this->window->setView(view);
 	this->level.render(this->window);
 	this->player.render(this->window);
-
 	this->window->setView(hudView);
 	this->hud.render(this->window);
 	//

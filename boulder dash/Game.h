@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <string>
+#include <thread>
+#include <future>
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
@@ -33,6 +35,13 @@ class Game
 	Player player;
 	Level level;
 	HUD hud;
+
+	Clock clock;
+	bool canPush = false;
+	bool waiting = false;
+	void canPushtoTrue();
+	Thread threadToTrue{ &Game::canPushtoTrue,this };
+	void CantPushAfterStop();
 
 	bool canMoveLeft();
 	bool canMoveRight();
