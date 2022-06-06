@@ -1,10 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include "SFML/Graphics.hpp"
-#include "SFML/System.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Audio.hpp"
+//#include "SFML/Graphics.hpp"
+//#include "SFML/System.hpp"
+//#include "SFML/Window.hpp"
+//#include "SFML/Audio.hpp"
 //#include "GameTile.h"
 #include "functions.h"
 
@@ -15,16 +15,21 @@ class Player
 {
 	float movementSpeed;
 	float nextSpot;
-	
+	int sizeX;
+	int sizeY;
 	Vector2f playerPos;
 
 	Texture texture;
 	Sprite sprite;
-	
+	IntRect source;
+
 	void initVeriables();
-	void setSize();
+	void setUpSprite();
 	void movement();
 
+	Clock animationClock;
+	Clock standingClock;
+	Thread thr{ &Player::waitToStand,this };
 	SoundBuffer buffer;
 	Sound hitSound;
 
@@ -41,6 +46,7 @@ public:
 	Player();
 	~Player();
 
+	void waitToStand();
 	void playHitSound();
 	void setPlayerPos(tilePos);
 	void updateInput(bool, bool, bool, bool);

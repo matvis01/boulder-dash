@@ -1,16 +1,4 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <thread>
-#include <filesystem>
-#include <sstream>
-#include <vector>
-#include "SFML/Graphics.hpp"
-#include "SFML/System.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Audio.hpp"
-#include "Player.h"
-#include "GameTile.h"
 #include "Level.h"
 #include "HUD.h"
 #include "Menu.h"

@@ -8,6 +8,9 @@ void Player::initVeriables()
 	this->playerPos = Vector2f(40.f, 40.f);
 	this->playerPosTile.x = 0;
 	this->playerPosTile.y = 0;
+	this->sizeX = 56;
+	this->sizeY = 86;
+	source = { sizeX, 0, sizeX, sizeY };
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -15,25 +18,24 @@ void Player::initVeriables()
 	}
 }
 
-void Player::setSize()
+void Player::setUpSprite()
 {
+	if (!texture.loadFromFile("assets\\character.png"))
+	{
+		std::cout << "could not load player texture";
+	}
+	sprite.setTexture(texture);
+	sprite.setTextureRect(source);
+	sprite.setOrigin(Vector2f(sizeX/2.f, sizeY/2.f));
 
-	sprite.setOrigin(Vector2f(40.f, 40.f));
-
-	//this->sprite.setScale(Vector2f(1.5, 1.5));
+	this->sprite.setPosition(playerPos);
 }
 
 Player::Player()
 {
 	this->initVeriables();
-
-	this->sprite.setPosition(playerPos);
-
-	if (!texture.loadFromFile("assets\\player.png"))
-	{
-		std::cout << "could not load player texture";
-	}
-	sprite.setTexture(texture);
+	this->setUpSprite();
+	
 
 	if (!buffer.loadFromFile("sounds\\uff.wav"))
 	{
@@ -41,7 +43,7 @@ Player::Player()
 	}
 	hitSound.setBuffer(buffer);
 	
-	this->setSize();
+	
 }
 
 Vector2f Player::getPlayerPos()
@@ -68,12 +70,31 @@ void Player::movement()
 			this->sprite.move(-movementSpeed, 0.f);
 			movedLeft = true;
 
+			//animation
+			if (animationClock.getElapsedTime() >= milliseconds(150))
+			{
+				if (source.left == 0)
+				{
+					source.left = sizeX*2;
+				}
+				else
+				{
+					source.left -= sizeX;
+				}
+					sprite.setTextureRect(source);
+					animationClock.restart();
+			}
+			//
+
 			if (this->sprite.getPosition().x <= nextSpot)
 			{
-				
+			
 				this->sprite.setPosition(nextSpot,this->sprite.getPosition().y);
 				isMoving = false;
 				direction[LEFT] = false;
+
+				standingClock.restart();
+				thr.launch();
 			}
 		}
 		else if (direction[RIGHT] == true)
@@ -81,33 +102,90 @@ void Player::movement()
 			this->sprite.move(movementSpeed, 0.f);
 			movedLeft = false;
 
+			//animation
+			if (animationClock.getElapsedTime() >= milliseconds(150))
+			{
+				if (source.left == 0)
+				{
+					source.left = sizeX * 2;
+				}
+				else
+				{
+					source.left -= sizeX;
+				}
+				sprite.setTextureRect(source);
+				animationClock.restart();
+			}
+
+			//
 			if (this->sprite.getPosition().x >= nextSpot)
 			{
 				this->sprite.setPosition(nextSpot, this->sprite.getPosition().y);
 				isMoving = false;
 				direction[RIGHT] = false;
+
+				standingClock.restart();
+				thr.launch();
 			}
 		}
 		else if (direction[UP] == true)
 		{
 			this->sprite.move(0.f,-movementSpeed);
 
+			//animation
+			if (animationClock.getElapsedTime() >= milliseconds(150))
+			{
+				if (source.left == 0)
+				{
+					source.left = sizeX * 2;
+				}
+				else
+				{
+					source.left -= sizeX;
+				}
+				sprite.setTextureRect(source);
+				animationClock.restart();
+			}
+			//
+
 			if (this->sprite.getPosition().y <= nextSpot)
 			{
 				this->sprite.setPosition(this->sprite.getPosition().x,nextSpot);
 				isMoving = false;
 				direction[UP] = false;
+				standingClock.restart();
+				thr.launch();
+
 			}
 		}
 		else if (direction[DOWN] == true)
 		{
 			this->sprite.move(0.f, movementSpeed);
 
+			//animation
+			if (animationClock.getElapsedTime() >= milliseconds(150))
+			{
+				if (source.left == 0)
+				{
+					source.left = sizeX * 2;
+				}
+				else
+				{
+					source.left -= sizeX;
+				}
+				sprite.setTextureRect(source);
+				animationClock.restart();
+			}
+
+			//
 			if (this->sprite.getPosition().y >= nextSpot)
 			{
 				this->sprite.setPosition(this->sprite.getPosition().x, nextSpot);
 				isMoving = false;
 				direction[DOWN] = false;
+
+				standingClock.restart();
+				thr.launch();
 			}
 		}
 	}
@@ -119,11 +197,11 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 	{
 		if ((Keyboard::isKeyPressed(Keyboard::A)) or (Keyboard::isKeyPressed(Keyboard::Left)))
 		{
-			this->sprite.setScale(-1.f, 1.f);
+			this->sprite.setScale(1.f, 1.f);
 			if (canMoveLeft)
 			{
+				source.top = sizeY;
 				this->playerPosTile.x -= 1;
-
 				nextSpot = this->sprite.getPosition().x - this->squareSize;
 				direction[LEFT] = true;
 				isMoving = true;
@@ -131,11 +209,11 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 		}
 		else if ((Keyboard::isKeyPressed(Keyboard::D)) or (Keyboard::isKeyPressed(Keyboard::Right)))
 		{
-			this->sprite.setScale(1.f, 1.f);
+			this->sprite.setScale(-1.f, 1.f);
 			if (canMoveRight)
 			{
 				this->playerPosTile.x += 1;
-
+				source.top = sizeY;
 				nextSpot = this->sprite.getPosition().x + this->squareSize;
 				direction[RIGHT] = true;
 				isMoving = true;
@@ -146,7 +224,7 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 			if (canMoveDown)
 			{
 				this->playerPosTile.y += 1;
-
+				source.top = 0;
 				nextSpot = this->sprite.getPosition().y + this->squareSize;
 				direction[DOWN] = true;
 				isMoving = true;
@@ -158,12 +236,25 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 			if (canMoveUp)
 			{
 				this->playerPosTile.y -= 1;
-
+				source.top = sizeY*2;
 				nextSpot = this->sprite.getPosition().y - this->squareSize;
 				direction[UP] = true;
 				isMoving = true;
 			}
 		}
+	}
+}
+
+void Player::waitToStand()
+{
+	while (standingClock.getElapsedTime() < seconds(0.15))
+	{
+		
+	}
+	if (!isMoving)
+	{
+		source = { sizeX, 0, sizeX, sizeY };
+		sprite.setTextureRect(source);
 	}
 }
 

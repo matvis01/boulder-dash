@@ -5,10 +5,7 @@
 #include <regex>
 #include <sstream>
 #include <fstream>
-#include "SFML/Graphics.hpp"
-#include "SFML/System.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Audio.hpp"
+#include "functions.h"
 #include "Player.h"
 #include "GameTile.h"
 #include <vector>
@@ -17,7 +14,7 @@
 #include "Rock.h"
 #include "Diamond.h"
 #include "EndLvl.h"
-#include "functions.h"
+
 
 namespace fs = std::filesystem;
 using namespace std;

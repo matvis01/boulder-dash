@@ -46,9 +46,7 @@ void Game::chooseFirstScreen()
 
 void Game::canPushtoTrue()
 {
-	Time t = seconds(0.5f);
-	
-	while (t > clock.getElapsedTime())
+	while (seconds(0.5) > clock.getElapsedTime())
 	{
 		waiting = true;
 	}

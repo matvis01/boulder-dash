@@ -76,6 +76,7 @@ bool Rock::fallLeft()
 		if (sprite.getPosition().x > nextSpotSide)
 		{
 			this->sprite.move(-2.f, 1/2.f);
+			sprite.rotate(-2.f);
 		}
 		else
 		{
@@ -110,6 +111,7 @@ bool Rock::fallRight()
 		if (sprite.getPosition().x < this->nextSpotSide)
 		{
 			this->sprite.move(2.f, 1 / 2.f);
+			sprite.rotate(2.f);
 		}
 		else
 		{
@@ -142,6 +144,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			this->sprite.move(-(speed+(1/10.f)), 0.f);
+			sprite.rotate(-3.f);
 
 			if (sprite.getPosition().x <= nextSpot)
 			{
@@ -165,6 +168,7 @@ bool Rock::moveSideways(bool movesLeft , float speed)
 		else
 		{
 			this->sprite.move(speed+(1 / 10.f), 0.f);
+			sprite.rotate(3.f);
 
 			if (sprite.getPosition().x >= nextSpot)
 			{
