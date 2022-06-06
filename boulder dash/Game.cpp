@@ -2,8 +2,8 @@
 
 void Game::initVariables()
 {
-	this->endGame = false;
 	this->viewIsMoving = false;
+	whichMenu = GameState::menuWithContinue;
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -14,8 +14,34 @@ void Game::initVariables()
 void Game::initWindow()
 {
 	this->videoMode = VideoMode(1280, 960);
-	this->window = new RenderWindow(this->videoMode, "boulder dash", Style::Close | Style::Titlebar);
+	this->window = new RenderWindow(videoMode, "boulder dash", Style::Close | Style::Titlebar);
 	this->window->setFramerateLimit(144);
+}
+
+void Game::setupMenus()
+{
+	menus.push_back(new Menu{ window,"NEW GAME","QUIT"});				// manu no continue
+	menus.push_back(new Menu{ window,"CONTINUE", "NEW GAME","QUIT" });	// menu with continue
+	menus.push_back(new Menu{ window,"CONTINUE","RESTART","MENU" });	//paused
+	menus.push_back(new Menu{ window,"NEXT LEVEL","RESTART","MENU" });	// between levles
+	menus.push_back(new Menu{ window,"RESTART","MENU" });				//death screen
+	menus.push_back(new Menu{ window,"RESTART","MENU" });				//game finished
+}
+
+void Game::chooseFirstScreen()
+{
+	ifstream inputfile("saves\\save.txt");
+	string line;
+
+	getline(inputfile, line);
+	istringstream(line) >> level.currentLevel;
+
+	if (level.currentLevel == 0)
+	{
+		whichMenu = GameState::menuNoContinue;
+	}
+	else
+		whichMenu = GameState::menuWithContinue;
 }
 
 void Game::canPushtoTrue()
@@ -49,7 +75,6 @@ void Game::CantPushAfterStop()
 		}
 	}
 }
-
 
 bool Game::canMoveLeft()
 {
@@ -263,23 +288,30 @@ void Game::tryViewMove()
 Game::Game()
 {
 	this->initVariables();
-	this->initWindow();
+	initWindow();
 	this->initViews();
-	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
+	setupMenus();
+	chooseFirstScreen();
 
+	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 	player.setPlayerPos(level.playerStartingPos);
 	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 	hud.updateDiamondAmount();
 }
 
-Game::~Game()
-{
-	delete this->window;
-}
-
 const bool Game::running() const
 {
 	return this->window->isOpen();
+}
+
+Game::~Game()
+{
+	
+	for (int i = 0; i < menus.size(); i++)
+	{
+		delete this->menus[i];
+	}
+	delete this->window;
 }
 
 void Game::pollEvents()
@@ -290,18 +322,126 @@ void Game::pollEvents()
 
 		if (sfmlEvent.type == Event::KeyPressed)
 		{
-			if (this->sfmlEvent.key.code == Keyboard::Escape) this->window->close();
-
-			if (Keyboard::isKeyPressed(Keyboard::R))
+			if (whichMenu == GameState::mainGame)
 			{
-				if (!viewIsMoving and !player.isMoving)
+				if (this->sfmlEvent.key.code == Keyboard::Escape)
+					whichMenu = GameState::paused;
+				if (this->sfmlEvent.key.code == Keyboard::R)
 				{
-					level.clearLevel();
-					level.setupLevel();
-					player.setPlayerPos(level.playerStartingPos);
-					hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
-					hud.updateDiamondAmount();
-					view.setCenter(1280 / 2.f, 960 / 2.f - 80);
+					player.isMoving = false;
+					viewIsMoving = false;
+					loadCurrentLevel();
+				}
+			}
+			else
+			{
+				if (this->sfmlEvent.key.code == Keyboard::Down or this->sfmlEvent.key.code == Keyboard::S)
+					menus[whichMenu]->MoveDown();
+				if (this->sfmlEvent.key.code == Keyboard::Up or this->sfmlEvent.key.code == Keyboard::W)
+					menus[whichMenu]->MoveUp();
+
+				if (this->sfmlEvent.key.code == Keyboard::Enter or this->sfmlEvent.key.code == Keyboard::Space)
+				{
+					if (whichMenu == GameState::menuNoContinue)
+					{
+						if (menus[whichMenu]->selectedButton == 0)
+						{
+							level.currentLevel = 0;
+							loadCurrentLevel();
+							whichMenu = GameState::mainGame;
+						}
+						else
+							this->window->close();
+					}
+					if (whichMenu == GameState::menuWithContinue)
+					{
+							if (menus[whichMenu]->selectedButton == 0)
+							{
+								whichMenu = GameState::mainGame;
+								loadCurrentLevel();
+							}
+							else if (menus[whichMenu]->selectedButton == 1)
+							{
+								whichMenu = GameState::mainGame;
+								level.currentLevel = 0;
+
+								ofstream outputFile("saves\\save.txt");
+								if (outputFile.is_open())
+								{
+									outputFile << level.currentLevel;
+									outputFile.close();
+								}
+								loadCurrentLevel();
+							}
+							else
+								this->window->close();
+					}
+					if (whichMenu == GameState::paused)
+					{
+							if (menus[whichMenu]->selectedButton == 0)
+							{
+								whichMenu = GameState::mainGame;
+							}
+							else if (menus[whichMenu]->selectedButton == 1)
+							{
+
+								loadCurrentLevel();
+								whichMenu = GameState::mainGame;
+							}
+							else
+								whichMenu = GameState::menuWithContinue;
+					}
+					if (whichMenu == GameState::betweenLevels)
+					{
+							if (menus[whichMenu]->selectedButton == 0)
+							{
+								loadCurrentLevel();
+								ofstream outputFile("saves\\save.txt");
+								if (outputFile.is_open())
+								{
+									outputFile << level.currentLevel;
+									outputFile.close();
+								}
+								whichMenu = GameState::mainGame;
+							}
+							else if (menus[whichMenu]->selectedButton == 1)
+							{
+								level.currentLevel--;
+								loadCurrentLevel();
+								whichMenu = GameState::mainGame;
+							}
+							else
+								whichMenu = GameState::menuWithContinue;
+					}
+					if (whichMenu == GameState::deathScreen)
+					{
+							if (menus[whichMenu]->selectedButton == 0)
+							{
+								loadCurrentLevel();
+								whichMenu = GameState::mainGame;
+							}
+							else
+								whichMenu = GameState::menuWithContinue;
+					}
+					if (whichMenu == GameState::gameFinished)
+					{
+						if (menus[whichMenu]->selectedButton == 0)
+						{
+							loadCurrentLevel();
+							whichMenu = GameState::mainGame;
+						}
+						else
+						{
+							level.currentLevel = 0;
+							ofstream outputFile("saves\\save.txt");
+							if (outputFile.is_open())
+							{
+								outputFile << level.currentLevel;
+								outputFile.close();
+							}
+							whichMenu = GameState::menuNoContinue;
+						}
+					}
 				}
 			}
 		}
@@ -330,21 +470,30 @@ void Game::playerOnGameTile()
 				if (!player.isMoving)
 				{
 					level.currentLevel += 1;
-					level.clearLevel();
-					level.setupLevel();
-					player.setPlayerPos(level.playerStartingPos);
-					view.setCenter(1280 / 2.f, 960 / 2.f - 80);
-					hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
-					hud.updateDiamondAmount();
+					whichMenu = GameState::betweenLevels;
 				}
 			}
 			else
 			{
 				std::cout << "game finished" << std::endl;
+				whichMenu = GameState::gameFinished;
 			}
 
 		}
 	}
+}
+
+void Game::loadCurrentLevel()
+{
+	player.isMoving = false;
+	viewIsMoving = false;
+	level.clearLevel();
+	level.setupLevel();
+	player.setPlayerPos(level.playerStartingPos);
+	view.setCenter(1280 / 2.f, 960 / 2.f - 80);
+	hud.resetHearts();
+	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
+	hud.updateDiamondAmount();
 }
 
 void Game::tryMoveRockSideways()
@@ -381,6 +530,23 @@ void Game::tryMoveRockSideways()
 	}
 }
 
+void Game::playerHit(int x,int y)
+{
+	player.playHitSound();
+
+	if (hud.heartsLeft > 1)
+	{
+		hud.removeHeart();
+		hud.heartsLeft--;
+
+		if (level.tiles[x][y] != nullptr)
+		{
+			level.tiles[x][y] = nullptr;
+		}
+	}
+	else
+		whichMenu = GameState::deathScreen;
+}
 
 void Game::findFallable()
 {
@@ -395,47 +561,44 @@ void Game::findFallable()
 			if (level.tiles[x][y] != nullptr and !level.tiles[x][y]->getIsMovingSideways())
 			{
 				if (level.tiles[x][y + 1] == nullptr) // falls down
-				{
-					if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
-					{
-						std::cout << "player dies 1!!!!!!!!!!!!!!!!!!!!! \n";
-					}
+				{	
 					if (!(player.playerPosTile.x == x and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock)
 					{
 						if (level.tiles[x][y]->fallDown())
 						{
-
 							if (player.playerPosTile.x == x and player.playerPosTile.y == y + 2 and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 							{
 								std::cout << "player dies 2!!!!!!!!!!!!!!!!!!!!! \n";
+								playerHit(x, y);
 							}
+							else
+							{
+								level.tiles[x][y]->changeIsMoving();
+								level.tiles[x][y]->tilePosition.y = y + 1;
 
-							level.tiles[x][y]->changeIsMoving();
-
-							level.tiles[x][y]->tilePosition.y = y + 1;
-
-
-							level.tiles[x][y + 1] = level.tiles[x][y];
-							level.tiles[x][y] = nullptr;
-
+								level.tiles[x][y + 1] = level.tiles[x][y];
+								level.tiles[x][y] = nullptr;
+								level.tiles[x][y + 1]->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+							}
 						}
 					}
-					if (level.tiles[x][y] != nullptr and level.tiles[x][y]->getName() == Name::diamond)
+					else if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
+					{
+						std::cout << "player dies 1!!!!!!!!!!!!!!!!!!!!! \n";
+						playerHit(x, y);
+					}
+					else if (level.tiles[x][y] != nullptr and level.tiles[x][y]->getName() == Name::diamond)
 					{//diamond can fall when a player is under it
 
 						if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->getName() == Name::rock))
 						{// diamond can't fall if there is a rock above it
 							if (level.tiles[x][y]->fallDown())
 							{
-
 								level.tiles[x][y]->changeIsMoving();
-
 								level.tiles[x][y]->tilePosition.y = y + 1;
-
-
 								level.tiles[x][y + 1] = level.tiles[x][y];
 								level.tiles[x][y] = nullptr;
-
+								level.tiles[x][y + 1]->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 							}
 						}
 					}
@@ -456,22 +619,25 @@ void Game::findFallable()
 										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// player dies
 										{// player on right
 											std::cout << "player dies  right 3!!!!!!!!!!!!!!!!!!!!! \n";
+											playerHit(x, y);
 										}
-										if (level.tiles[x][y]->fallRight())
+										else if (level.tiles[x][y]->fallRight())
 										{
 											if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y] != nullptr and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock) // should player die
 											{
 												std::cout << "player dies right 4!!!!!!!!!!!!!!!!!!!!! \n";
+												playerHit(x, y);
 											}
-											level.tiles[x][y]->changeIsMoving();
-											lastFellLeft = false;
-
-											level.tiles[x][y]->tilePosition.y = y + 1;
-											level.tiles[x][y]->tilePosition.x = x + 1;
-
-
-											level.tiles[x + 1][y + 1] = level.tiles[x][y];
-											level.tiles[x][y] = nullptr;
+											else
+											{
+												level.tiles[x][y]->changeIsMoving();
+												lastFellLeft = false;
+												level.tiles[x][y]->tilePosition.y = y + 1;
+												level.tiles[x][y]->tilePosition.x = x + 1;
+												level.tiles[x + 1][y + 1] = level.tiles[x][y];
+												level.tiles[x][y] = nullptr;
+												level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+											}
 										}
 
 									}
@@ -480,22 +646,28 @@ void Game::findFallable()
 										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 										{ // player on left
 											std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
+											playerHit(x, y);
 										}
-										if (level.tiles[x][y]->fallLeft())
+										else if (level.tiles[x][y]->fallLeft())
 										{
 											if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 											{
 												std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
+												playerHit(x, y);
 											}
-											level.tiles[x][y]->changeIsMoving();
-											lastFellLeft = true;
+											else
+											{
+												level.tiles[x][y]->changeIsMoving();
+												lastFellLeft = true;
 
-											level.tiles[x][y]->tilePosition.x = x - 1;
-											level.tiles[x][y]->tilePosition.y = y + 1;
+												level.tiles[x][y]->tilePosition.x = x - 1;
+												level.tiles[x][y]->tilePosition.y = y + 1;
 
 
-											level.tiles[x - 1][y + 1] = level.tiles[x][y];
-											level.tiles[x][y] = nullptr;
+												level.tiles[x - 1][y + 1] = level.tiles[x][y];
+												level.tiles[x][y] = nullptr;
+												level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+											}
 										}
 									}
 								}
@@ -506,15 +678,20 @@ void Game::findFallable()
 										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
 										{
 											std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
+											playerHit(x, y);
 										}
-										level.tiles[x][y]->changeIsMoving();
-										lastFellLeft = false;
+										else
+										{
+											level.tiles[x][y]->changeIsMoving();
+											lastFellLeft = false;
 
-										level.tiles[x][y]->tilePosition.x = x + 1;
-										level.tiles[x][y]->tilePosition.y = y + 1;
+											level.tiles[x][y]->tilePosition.x = x + 1;
+											level.tiles[x][y]->tilePosition.y = y + 1;
 
-										level.tiles[x + 1][y + 1] = level.tiles[x][y];
-										level.tiles[x][y] = nullptr;
+											level.tiles[x + 1][y + 1] = level.tiles[x][y];
+											level.tiles[x][y] = nullptr;
+											level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+										}
 									}
 								}
 								else if (!(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1)) // player not blocking left
@@ -522,22 +699,27 @@ void Game::findFallable()
 									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 									{ // player on left
 										std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
+										playerHit(x, y);
 									}
-									if (level.tiles[x][y]->fallLeft())
+									else if (level.tiles[x][y]->fallLeft())
 									{
 										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
 										{
 											std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
+											playerHit(x, y);
 										}
-										level.tiles[x][y]->changeIsMoving();
-										lastFellLeft = true;
+										else
+										{
+											level.tiles[x][y]->changeIsMoving();
+											lastFellLeft = true;
 
+											level.tiles[x][y]->tilePosition.x = x - 1;
+											level.tiles[x][y]->tilePosition.y = y + 1;
 
-										level.tiles[x][y]->tilePosition.x = x - 1;
-										level.tiles[x][y]->tilePosition.y = y + 1;
-
-										level.tiles[x - 1][y + 1] = level.tiles[x][y];
-										level.tiles[x][y] = nullptr;
+											level.tiles[x - 1][y + 1] = level.tiles[x][y];
+											level.tiles[x][y] = nullptr;
+											level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+										}
 									}
 								}
 							}
@@ -548,41 +730,55 @@ void Game::findFallable()
 									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
 									{
 										std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
+										playerHit(x, y);
 									}
-									level.tiles[x][y]->changeIsMoving();
-									lastFellLeft = true;
-									level.tiles[x][y]->tilePosition.x = x - 1;
-									level.tiles[x][y]->tilePosition.y = y + 1;
+									else
+									{
+										level.tiles[x][y]->changeIsMoving();
+										lastFellLeft = true;
+										level.tiles[x][y]->tilePosition.x = x - 1;
+										level.tiles[x][y]->tilePosition.y = y + 1;
 
-									level.tiles[x - 1][y + 1] = level.tiles[x][y];
-									level.tiles[x][y] = nullptr;
+										level.tiles[x - 1][y + 1] = level.tiles[x][y];
+										level.tiles[x][y] = nullptr;
+										level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+									}
 								}
 							}
 							else if (level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+							{
 								std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
+								playerHit(x, y);
+							}
 						}
 						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr)
 						{//only right free
 							if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// gracz umiera
 							{// player on right
 								std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
+								playerHit(x, y);
 							}
-							if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1))
+							else if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1))
 							{
 								if (level.tiles[x][y]->fallRight())
 								{
 									if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
 									{
 										std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
+										playerHit(x, y);
 									}
-									level.tiles[x][y]->changeIsMoving();
-									lastFellLeft = false;
+									else
+									{
+										level.tiles[x][y]->changeIsMoving();
+										lastFellLeft = false;
 
-									level.tiles[x][y]->tilePosition.x = x + 1;
-									level.tiles[x][y]->tilePosition.y = y + 1;
+										level.tiles[x][y]->tilePosition.x = x + 1;
+										level.tiles[x][y]->tilePosition.y = y + 1;
 
-									level.tiles[x + 1][y + 1] = level.tiles[x][y];
-									level.tiles[x][y] = nullptr;
+										level.tiles[x + 1][y + 1] = level.tiles[x][y];
+										level.tiles[x][y] = nullptr;
+										level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+									}
 								}
 							}
 						}
@@ -593,29 +789,39 @@ void Game::findFallable()
 	}
 }
 
-
 void Game::update()
 {
-	this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
-	findFallable();
+	if (whichMenu == GameState::mainGame)
+	{
+		this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
+		findFallable();
+		
+		playerOnGameTile();
+		tryMoveRockSideways();
+		tryViewMove();
+		moveView();
+		CantPushAfterStop();
+	}
 	this->pollEvents();
-	playerOnGameTile();
-	tryMoveRockSideways();
-	tryViewMove();
-	moveView();
-	CantPushAfterStop();
-
 }
 
 void Game::render()
 {
-	this->window->clear();
-	// stuff to render
-	this->window->setView(view);
-	this->level.render(this->window);
-	this->player.render(this->window);
-	this->window->setView(hudView);
-	this->hud.render(this->window);
-	//
-	this->window->display();
+		this->window->clear();
+		// stuff to render
+
+		if (whichMenu == GameState::mainGame)
+		{
+		this->window->setView(view);
+		this->level.render(this->window);
+		this->player.render(this->window);
+		this->window->setView(hudView);
+		this->hud.render(this->window);
+		}
+		else
+		{
+			menus[whichMenu]->render();
+		}
+		//
+		this->window->display();
 }

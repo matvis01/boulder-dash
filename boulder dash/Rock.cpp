@@ -73,7 +73,6 @@ bool Rock::fallLeft()
 	}
 	else
 	{
-
 		if (sprite.getPosition().x > nextSpotSide)
 		{
 			this->sprite.move(-2.f, 1/2.f);

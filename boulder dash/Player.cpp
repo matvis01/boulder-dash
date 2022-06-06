@@ -21,7 +21,6 @@ void Player::setSize()
 	sprite.setOrigin(Vector2f(40.f, 40.f));
 
 	//this->sprite.setScale(Vector2f(1.5, 1.5));
-
 }
 
 Player::Player()
@@ -36,6 +35,11 @@ Player::Player()
 	}
 	sprite.setTexture(texture);
 
+	if (!buffer.loadFromFile("sounds\\uff.wav"))
+	{
+		std::cout << "cant load hit sound";
+	}
+	hitSound.setBuffer(buffer);
 	
 	this->setSize();
 }
@@ -113,7 +117,7 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 {
 	if (!isMoving)
 	{
-		if (Keyboard::isKeyPressed(Keyboard::A))
+		if ((Keyboard::isKeyPressed(Keyboard::A)) or (Keyboard::isKeyPressed(Keyboard::Left)))
 		{
 			this->sprite.setScale(-1.f, 1.f);
 			if (canMoveLeft)
@@ -125,7 +129,7 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 				isMoving = true;
 			}
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::D))
+		else if ((Keyboard::isKeyPressed(Keyboard::D)) or (Keyboard::isKeyPressed(Keyboard::Right)))
 		{
 			this->sprite.setScale(1.f, 1.f);
 			if (canMoveRight)
@@ -137,21 +141,28 @@ void Player::updateInput(bool canMoveLeft, bool canMoveRight, bool canMoveDown, 
 				isMoving = true;
 			}
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::S) and canMoveDown)
+		else if ((Keyboard::isKeyPressed(Keyboard::S)) or (Keyboard::isKeyPressed(Keyboard::Down)))
 		{
-			this->playerPosTile.y += 1;
+			if (canMoveDown)
+			{
+				this->playerPosTile.y += 1;
 
-			nextSpot = this->sprite.getPosition().y + this->squareSize;
-			direction[DOWN] = true;
-			isMoving = true;
+				nextSpot = this->sprite.getPosition().y + this->squareSize;
+				direction[DOWN] = true;
+				isMoving = true;
+			}
+			
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::W) and canMoveUp)
+		else if ((Keyboard::isKeyPressed(Keyboard::W)) or (Keyboard::isKeyPressed(Keyboard::Up)))
 		{
-			this->playerPosTile.y -= 1;
+			if (canMoveUp)
+			{
+				this->playerPosTile.y -= 1;
 
-			nextSpot = this->sprite.getPosition().y - this->squareSize;
-			direction[UP] = true;
-			isMoving = true;
+				nextSpot = this->sprite.getPosition().y - this->squareSize;
+				direction[UP] = true;
+				isMoving = true;
+			}
 		}
 	}
 }
@@ -161,6 +172,11 @@ void Player::setPlayerPos(tilePos startingPos)
 	playerPosTile = startingPos;
 	playerPos = Vector2f(startingPos.x * 80.f + 40.f, startingPos.y * 80.f + 40.f);
 	sprite.setPosition(playerPos);
+}
+
+void Player::playHitSound()
+{
+	hitSound.play();
 }
 
 void Player::update(bool canMoveLeft, bool canMoveRight, bool canMoveDown, bool canMoveUp)

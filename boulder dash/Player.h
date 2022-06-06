@@ -14,12 +14,9 @@ using namespace sf;
 class Player
 {
 	float movementSpeed;
-
-
 	float nextSpot;
 	
 	Vector2f playerPos;
-
 
 	Texture texture;
 	Sprite sprite;
@@ -28,12 +25,15 @@ class Player
 	void setSize();
 	void movement();
 
+	SoundBuffer buffer;
+	Sound hitSound;
 
 public:
 	bool isMoving;
 	bool direction[4];
 	bool movedLeft;
 	float squareSize;
+	
 
 	tilePos playerPosTile;
 	Vector2f getPlayerPos();
@@ -41,6 +41,7 @@ public:
 	Player();
 	~Player();
 
+	void playHitSound();
 	void setPlayerPos(tilePos);
 	void updateInput(bool, bool, bool, bool);
 	void update(bool, bool, bool, bool);

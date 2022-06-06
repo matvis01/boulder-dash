@@ -36,7 +36,7 @@ public:
 	virtual bool fallRight() = 0;
 	virtual bool moveSideways(bool movesLeft, float speed) = 0;
 	virtual ~GameTile() {};
-
+	void setSpritePos(Vector2f);
 	virtual Name getName();
 	Vector2f getPos();
 	float getTileSize();

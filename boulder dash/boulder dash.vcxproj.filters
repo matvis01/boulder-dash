@@ -13,75 +13,93 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Tiles">
+      <UniqueIdentifier>{fadd1b09-a72a-4c89-8cb1-325a83273773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tiles">
+      <UniqueIdentifier>{12b21775-7ce7-4d17-854c-21c6102986d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{256edf60-1039-4e4f-824e-818f1b94823a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{aefbbbad-0a7f-42e2-b6b7-965e05226550}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Wall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ground.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Diamond.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EndLvl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Rock.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTile.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EndLvl.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Diamond.cpp">
+      <Filter>Source Files\Tiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Diamond.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="functions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EndLvl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HUD.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Diamond.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EndLvl.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTile.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Rock.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>Header Files\Tiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

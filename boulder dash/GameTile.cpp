@@ -16,6 +16,11 @@ Vector2f GameTile::getPos()
 	return sprite.getPosition();
 }
 
+void GameTile::setSpritePos(Vector2f pos)
+{
+	sprite.setPosition(pos);
+}
+
 Name GameTile::getName()
 {
 	return name;
