@@ -285,7 +285,7 @@ void Game::tryViewMove()
 
 Game::Game()
 {
-	this->initVariables();
+	
 	initWindow();
 	this->initViews();
 	setupMenus();
@@ -295,6 +295,7 @@ Game::Game()
 	player.setPlayerPos(level.playerStartingPos);
 	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 	hud.updateDiamondAmount();
+	this->initVariables();
 }
 
 const bool Game::running() const
@@ -460,6 +461,10 @@ void Game::playerOnGameTile()
 			hud.diamondsCollected += 1;
 			hud.updateDiamondAmount();
 			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+			if (this->level.tiles[player.playerPosTile.x][player.playerPosTile.y - 1] != nullptr and this->level.tiles[player.playerPosTile.x][player.playerPosTile.y - 1]->getName() == Name::rock)
+			{
+				level.tiles[player.playerPosTile.x][player.playerPosTile.y - 1]->changeIsMoving();
+			}
 		}
 		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::endlvl and level.diamondsCollected >= level.diamondsRequired)
 		{// on EndLvl tile and collected enough diamonds
@@ -559,7 +564,7 @@ void Game::findFallable()
 			if (level.tiles[x][y] != nullptr and !level.tiles[x][y]->getIsMovingSideways())
 			{
 				if (level.tiles[x][y + 1] == nullptr) // falls down
-				{	
+				{
 					if (!(player.playerPosTile.x == x and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock)
 					{
 						if (level.tiles[x][y]->fallDown())

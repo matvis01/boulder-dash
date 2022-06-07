@@ -17,17 +17,16 @@ class Game
 	bool viewIsMoving;
 	float viewNextSpotx, viewNextSpoty;
 	bool viewMoveDirection[4];
+	
 
 	Player player;
 	Level level;
 	HUD hud;
 
-
 	vector<Menu*> menus;
 	void setupMenus();
 	int whichMenu;
 	void chooseFirstScreen();
-	
 
 	Clock clock;
 	bool canPush = false;
