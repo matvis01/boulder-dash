@@ -1,11 +1,6 @@
 #pragma once
 
 #include <iostream>
-//#include "SFML/Graphics.hpp"
-//#include "SFML/System.hpp"
-//#include "SFML/Window.hpp"
-//#include "SFML/Audio.hpp"
-//#include "GameTile.h"
 #include "functions.h"
 
 using namespace sf;
@@ -30,15 +25,15 @@ class Player
 	Clock animationClock;
 	Clock standingClock;
 	Thread thr{ &Player::waitToStand,this };
-	SoundBuffer buffer;
-	Sound hitSound;
+	SoundBuffer buffer1, buffer2;
+	
 
 public:
 	bool isMoving;
 	bool direction[4];
 	bool movedLeft;
 	float squareSize;
-	
+	Sound hitSound, dirtSound;
 
 	tilePos playerPosTile;
 	Vector2f getPlayerPos();

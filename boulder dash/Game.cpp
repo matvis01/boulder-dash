@@ -120,7 +120,9 @@ bool Game::canMoveRight()
 			if (player.playerPosTile.x < level.mapSizeX - 2 and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x + 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y + 1] != nullptr)
 			{// single rock on right
 				if (this->level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y]->getIsMoving())
+				{
 					return false;
+				}
 				else
 				{
 					if (canPush)
@@ -285,17 +287,16 @@ void Game::tryViewMove()
 
 Game::Game()
 {
-	
+	this->initVariables();
 	initWindow();
 	this->initViews();
 	setupMenus();
 	chooseFirstScreen();
-
 	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 	player.setPlayerPos(level.playerStartingPos);
 	hud.setDiamondNumbers(level.diamondsCollected, level.diamondsRequired);
 	hud.updateDiamondAmount();
-	this->initVariables();
+
 }
 
 const bool Game::running() const
@@ -453,6 +454,7 @@ void Game::playerOnGameTile()
 	{
 		if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::ground)
 		{
+			player.dirtSound.play();
 			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
 		}
 		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::diamond)
@@ -565,7 +567,7 @@ void Game::findFallable()
 			{
 				if (level.tiles[x][y + 1] == nullptr) // falls down
 				{
-					if (!(player.playerPosTile.x == x and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock)
+					if (!(player.playerPosTile.x == x and player.playerPosTile.y == y + 1))
 					{
 						if (level.tiles[x][y]->fallDown())
 						{
@@ -578,7 +580,6 @@ void Game::findFallable()
 							{
 								level.tiles[x][y]->changeIsMoving();
 								level.tiles[x][y]->tilePosition.y = y + 1;
-
 								level.tiles[x][y + 1] = level.tiles[x][y];
 								level.tiles[x][y] = nullptr;
 								level.tiles[x][y + 1]->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
@@ -589,21 +590,6 @@ void Game::findFallable()
 					{
 						std::cout << "player dies 1!!!!!!!!!!!!!!!!!!!!! \n";
 						playerHit(x, y);
-					}
-					else if (level.tiles[x][y] != nullptr and level.tiles[x][y]->getName() == Name::diamond)
-					{//diamond can fall when a player is under it
-
-						if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->getName() == Name::rock))
-						{// diamond can't fall if there is a rock above it
-							if (level.tiles[x][y]->fallDown())
-							{
-								level.tiles[x][y]->changeIsMoving();
-								level.tiles[x][y]->tilePosition.y = y + 1;
-								level.tiles[x][y + 1] = level.tiles[x][y];
-								level.tiles[x][y] = nullptr;
-								level.tiles[x][y + 1]->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
-							}
-						}
 					}
 				}
 				else if (level.tiles[x][y + 1] != nullptr and level.tiles[x][y + 1]->movable and !level.tiles[x][y + 1]->getIsMoving())
@@ -616,7 +602,6 @@ void Game::findFallable()
 							{// both sides free
 								if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and !(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1))
 								{// player not blocking left or right
-
 									if (lastFellLeft) // falls right
 									{
 										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// player dies
@@ -665,8 +650,6 @@ void Game::findFallable()
 
 												level.tiles[x][y]->tilePosition.x = x - 1;
 												level.tiles[x][y]->tilePosition.y = y + 1;
-
-
 												level.tiles[x - 1][y + 1] = level.tiles[x][y];
 												level.tiles[x][y] = nullptr;
 												level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
@@ -687,10 +670,8 @@ void Game::findFallable()
 										{
 											level.tiles[x][y]->changeIsMoving();
 											lastFellLeft = false;
-
 											level.tiles[x][y]->tilePosition.x = x + 1;
 											level.tiles[x][y]->tilePosition.y = y + 1;
-
 											level.tiles[x + 1][y + 1] = level.tiles[x][y];
 											level.tiles[x][y] = nullptr;
 											level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
@@ -715,10 +696,8 @@ void Game::findFallable()
 										{
 											level.tiles[x][y]->changeIsMoving();
 											lastFellLeft = true;
-
 											level.tiles[x][y]->tilePosition.x = x - 1;
 											level.tiles[x][y]->tilePosition.y = y + 1;
-
 											level.tiles[x - 1][y + 1] = level.tiles[x][y];
 											level.tiles[x][y] = nullptr;
 											level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
@@ -741,7 +720,6 @@ void Game::findFallable()
 										lastFellLeft = true;
 										level.tiles[x][y]->tilePosition.x = x - 1;
 										level.tiles[x][y]->tilePosition.y = y + 1;
-
 										level.tiles[x - 1][y + 1] = level.tiles[x][y];
 										level.tiles[x][y] = nullptr;
 										level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
@@ -774,7 +752,6 @@ void Game::findFallable()
 									{
 										level.tiles[x][y]->changeIsMoving();
 										lastFellLeft = false;
-
 										level.tiles[x][y]->tilePosition.x = x + 1;
 										level.tiles[x][y]->tilePosition.y = y + 1;
 
@@ -796,9 +773,8 @@ void Game::update()
 {
 	if (whichMenu == GameState::mainGame)
 	{
-		this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
 		findFallable();
-		
+		this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
 		playerOnGameTile();
 		tryMoveRockSideways();
 		tryViewMove();
