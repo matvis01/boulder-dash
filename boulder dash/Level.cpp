@@ -128,53 +128,82 @@ void Level::renderEnemies(RenderTarget* target)
 {
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		enemies[i]->render(target);
+		if (enemies[i] != nullptr)
+		{
+			enemies[i]->render(target);
+		}
 	}
 }
 
-void Level::updateEnemies()
-{
-	bool b[4];
-	for (int i = 0; i < enemies.size(); i++)
-	{
-		b[LEFT] = enemyCanGoLeft(i);
-		b[UP] = enemyCanGoUp(i);
-		b[DOWN] = enemyCanGoDown(i);
-		b[RIGHT] = enemyCanGoRight(i);
-		enemies[i]->update(b);
-	}
-}
+
 
 bool Level::enemyCanGoUp(int i)
 {
 	if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y - 1] == nullptr)
+	{
 		return true;
+	}
 	else
+	{
+		if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y - 1]->getIsMoving())
+		{
+			return true;
+		}
+		else 
 		return false;
+	}
 }
 
 bool Level::enemyCanGoDown(int i)
 {
 	if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y + 1] == nullptr)
+	{
 		return true;
+	}
 	else
-		return false;
+	{
+
+		if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y + 1]->getIsMoving())
+		{
+			return true;
+		}
+		else
+			return false;
+	}
 }
 
 bool Level::enemyCanGoLeft(int i)
 {
 	if (tiles[enemies[i]->PosTile.x-1][enemies[i]->PosTile.y] == nullptr)
+	{
 		return true;
+	}
 	else
-		return false;
+	{
+		if (tiles[enemies[i]->PosTile.x-1][enemies[i]->PosTile.y]->getIsMoving())
+		{
+			return true;
+		}
+		else
+			return false;
+	}
 }
 
 bool Level::enemyCanGoRight(int i)
 {
 	if (tiles[enemies[i]->PosTile.x+1][enemies[i]->PosTile.y] == nullptr)
+	{
 		return true;
+	}
 	else
-		return false;
+	{
+		if (tiles[enemies[i]->PosTile.x+1][enemies[i]->PosTile.y]->getIsMoving())
+		{
+			return true;
+		}
+		else
+			return false;
+	}
 }
 
 void Level::clearLevel()

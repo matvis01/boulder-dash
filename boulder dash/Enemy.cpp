@@ -8,8 +8,8 @@ void Enemy::initVeriables()
 	//this->Pos = Vector2f(40.f, 40.f);
 	this->lastDir = DOWN;
 	
-	this->sizeX = 56;
-	this->sizeY = 86;
+	this->sizeX = 80;
+	this->sizeY = 64;
 	source = { sizeX, 0, sizeX, sizeY };
 
 	for (int i = 0; i < 4; i++)
@@ -20,7 +20,7 @@ void Enemy::initVeriables()
 
 void Enemy::setUpSprite()
 {
-	if (!texture.loadFromFile("assets\\character.png"))
+	if (!texture.loadFromFile("assets\\enemy.png"))
 	{
 		std::cout << "could not load player texture";
 	}
@@ -78,34 +78,7 @@ void Enemy::movement()
 
 			}
 		}
-		else if (direction[RIGHT] == true)
-		{
-			this->sprite.move(movementSpeed, 0.f);
-
-			//animation
-			if (animationClock.getElapsedTime() >= milliseconds(150))
-			{
-				if (source.left == 0)
-				{
-					source.left = sizeX * 2;
-				}
-				else
-				{
-					source.left -= sizeX;
-				}
-				sprite.setTextureRect(source);
-				animationClock.restart();
-			}
-
-			//
-			if (this->sprite.getPosition().x >= nextSpot)
-			{
-				this->sprite.setPosition(nextSpot, this->sprite.getPosition().y);
-				isMoving = false;
-				direction[RIGHT] = false;
-				lastDir = RIGHT;
-			}
-		}
+		
 		else if (direction[UP] == true)
 		{
 			this->sprite.move(0.f, -movementSpeed);
@@ -132,6 +105,34 @@ void Enemy::movement()
 				isMoving = false;
 				direction[UP] = false;
 				lastDir = UP;
+			}
+		}
+		else if (direction[RIGHT] == true)
+		{
+			this->sprite.move(movementSpeed, 0.f);
+
+			//animation
+			if (animationClock.getElapsedTime() >= milliseconds(150))
+			{
+				if (source.left == 0)
+				{
+					source.left = sizeX * 2;
+				}
+				else
+				{
+					source.left -= sizeX;
+				}
+				sprite.setTextureRect(source);
+				animationClock.restart();
+			}
+
+			//
+			if (this->sprite.getPosition().x >= nextSpot)
+			{
+				this->sprite.setPosition(nextSpot, this->sprite.getPosition().y);
+				isMoving = false;
+				direction[RIGHT] = false;
+				lastDir = RIGHT;
 			}
 		}
 		else if (direction[DOWN] == true)
@@ -170,63 +171,13 @@ void Enemy::updateMovement(bool canGoDir[4])
 	{
 		if (lastDir == LEFT)
 		{
-			if (canGoDir[LEFT])
-			{
-				source.top = sizeY;
-				this->PosTile.x -= 1;
-				nextSpot = this->sprite.getPosition().x - this->squareSize;
-				direction[LEFT] = true;
-				isMoving = true;
-			}
-			else if (canGoDir[UP])
-			{
-				this->PosTile.y -= 1;
-				source.top = sizeY * 2;
-				nextSpot = this->sprite.getPosition().y - this->squareSize;
-				direction[UP] = true;
-				isMoving = true;
-			}
-			else if (canGoDir[RIGHT])
-			{
-				this->PosTile.x += 1;
-				source.top = sizeY;
-				nextSpot = this->sprite.getPosition().x + this->squareSize;
-				direction[RIGHT] = true;
-				isMoving = true;
-			}
-			else if (canGoDir[DOWN])
-			{
-				this->PosTile.y += 1;
-				source.top = 0;
-				nextSpot = this->sprite.getPosition().y + this->squareSize;
-				direction[DOWN] = true;
-				isMoving = true;
-			}
-		}
-		else if (lastDir == UP)
-		{
+			
 			if (canGoDir[UP])
 			{
 				this->PosTile.y -= 1;
-				source.top = sizeY * 2;
+				source.top = sizeY * 3;
 				nextSpot = this->sprite.getPosition().y - this->squareSize;
 				direction[UP] = true;
-				isMoving = true;
-			}
-			else if (canGoDir[RIGHT])
-			{
-				this->PosTile.x += 1;
-				source.top = sizeY;
-				nextSpot = this->sprite.getPosition().x + this->squareSize;
-				direction[RIGHT] = true;
-				isMoving = true;
-			}
-			else if (canGoDir[DOWN])
-			{
-				this->PosTile.y += 1;
-				source.top = 0;
-				nextSpot = this->sprite.getPosition().y + this->squareSize;
-				direction[DOWN] = true;
 				isMoving = true;
 			}
 			else if (canGoDir[LEFT])
@@ -237,22 +188,40 @@ void Enemy::updateMovement(bool canGoDir[4])
 				direction[LEFT] = true;
 				isMoving = true;
 			}
+			else if (canGoDir[DOWN])
+			{
+				this->PosTile.y += 1;
+				source.top = 0;
+				nextSpot = this->sprite.getPosition().y + this->squareSize;
+				direction[DOWN] = true;
+				isMoving = true;
+			}
+			else if (canGoDir[RIGHT])
+			{
+				this->PosTile.x += 1;
+				source.top = sizeY*2;
+				nextSpot = this->sprite.getPosition().x + this->squareSize;
+				direction[RIGHT] = true;
+				isMoving = true;
+			}
+
 		}
-		else if (lastDir == RIGHT)
+		else if (lastDir == UP)
 		{
 			if (canGoDir[RIGHT])
 			{
 				this->PosTile.x += 1;
-				source.top = sizeY;
+				source.top = sizeY*2;
 				nextSpot = this->sprite.getPosition().x + this->squareSize;
 				direction[RIGHT] = true;
+				isMoving = true;
 			}
-			else if (canGoDir[DOWN])
+			else if (canGoDir[UP])
 			{
-				this->PosTile.y += 1;
-				source.top = 0;
-				nextSpot = this->sprite.getPosition().y + this->squareSize;
-				direction[DOWN] = true;
+				this->PosTile.y -= 1;
+				source.top = sizeY * 3;
+				nextSpot = this->sprite.getPosition().y - this->squareSize;
+				direction[UP] = true;
 				isMoving = true;
 			}
 			else if (canGoDir[LEFT])
@@ -263,16 +232,16 @@ void Enemy::updateMovement(bool canGoDir[4])
 				direction[LEFT] = true;
 				isMoving = true;
 			}
-			else if (canGoDir[UP])
+			else if (canGoDir[DOWN])
 			{
-				this->PosTile.y -= 1;
-				source.top = sizeY * 2;
-				nextSpot = this->sprite.getPosition().y - this->squareSize;
-				direction[UP] = true;
+				this->PosTile.y += 1;
+				source.top = 0;
+				nextSpot = this->sprite.getPosition().y + this->squareSize;
+				direction[DOWN] = true;
 				isMoving = true;
 			}
 		}
-		else if (lastDir == DOWN)
+		else if (lastDir == RIGHT)
 		{
 			if (canGoDir[DOWN])
 			{
@@ -282,6 +251,22 @@ void Enemy::updateMovement(bool canGoDir[4])
 				direction[DOWN] = true;
 				isMoving = true;
 			}
+			else if (canGoDir[RIGHT])
+			{
+				this->PosTile.x += 1;
+				source.top = sizeY*2;
+				nextSpot = this->sprite.getPosition().x + this->squareSize;
+				direction[RIGHT] = true;
+				isMoving = true;
+			}
+			else if (canGoDir[UP])
+			{
+				this->PosTile.y -= 1;
+				source.top = sizeY * 3;
+				nextSpot = this->sprite.getPosition().y - this->squareSize;
+				direction[UP] = true;
+				isMoving = true;
+			}
 			else if (canGoDir[LEFT])
 			{
 				source.top = sizeY;
@@ -290,20 +275,39 @@ void Enemy::updateMovement(bool canGoDir[4])
 				direction[LEFT] = true;
 				isMoving = true;
 			}
-			else if (canGoDir[UP])
+		}
+		else if (lastDir == DOWN)
+		{
+			if (canGoDir[LEFT])
 			{
-				this->PosTile.y -= 1;
-				source.top = sizeY * 2;
-				nextSpot = this->sprite.getPosition().y - this->squareSize;
-				direction[UP] = true;
+				source.top = sizeY;
+				this->PosTile.x -= 1;
+				nextSpot = this->sprite.getPosition().x - this->squareSize;
+				direction[LEFT] = true;
+				isMoving = true;
+			}
+			else if (canGoDir[DOWN])
+			{
+				this->PosTile.y += 1;
+				source.top = 0;
+				nextSpot = this->sprite.getPosition().y + this->squareSize;
+				direction[DOWN] = true;
 				isMoving = true;
 			}
 			else if (canGoDir[RIGHT])
 			{
 				this->PosTile.x += 1;
-				source.top = sizeY;
+				source.top = sizeY*2;
 				nextSpot = this->sprite.getPosition().x + this->squareSize;
 				direction[RIGHT] = true;
+				isMoving = true;
+			}
+			else if (canGoDir[UP])
+			{
+				this->PosTile.y -= 1;
+				source.top = sizeY * 3;
+				nextSpot = this->sprite.getPosition().y - this->squareSize;
+				direction[UP] = true;
 				isMoving = true;
 			}
 		}
@@ -312,8 +316,9 @@ void Enemy::updateMovement(bool canGoDir[4])
 
 void Enemy::update(bool CanGoDir[4])
 {
-	this->updateMovement(CanGoDir);
 	this->movement();
+	this->updateMovement(CanGoDir);
+
 }
 
 void Enemy::render(RenderTarget* target)

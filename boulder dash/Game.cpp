@@ -783,6 +783,40 @@ void Game::findFallable()
 	}
 }
 
+void Game::updateEnemies()
+{
+	bool b[4];
+	for (int i = 0; i < level.enemies.size(); i++)
+	{
+		if (level.enemies[i] != nullptr)
+		{
+			b[LEFT] = level.enemyCanGoLeft(i);
+			b[UP] = level.enemyCanGoUp(i);
+			b[DOWN] = level.enemyCanGoDown(i);
+			b[RIGHT] = level.enemyCanGoRight(i);
+			level.enemies[i]->update(b);
+
+			if (level.enemies[i]->PosTile.x == player.playerPosTile.x and level.enemies[i]->PosTile.y == player.playerPosTile.y)
+			{
+				level.enemies[i] = nullptr;
+				playerHit(player.playerPosTile.x, player.playerPosTile.y);
+			}
+
+
+			for (int j = 0; j < level.allFallable.size(); j++)
+			{
+				if (level.allFallable[j] != nullptr and level.tiles[level.allFallable[j]->tilePosition.x][level.allFallable[j]->tilePosition.y] != nullptr and level.enemies[i] != nullptr)
+				{
+					if (level.allFallable[j]->tilePosition.x == level.enemies[i]->PosTile.x and level.allFallable[j]->tilePosition.y == level.enemies[i]->PosTile.y)
+					{
+						level.enemies[i] = nullptr;
+					}
+				}
+			}
+		}
+	}
+}
+
 void Game::update()
 {
 	if (whichMenu == GameState::mainGame)
@@ -794,7 +828,7 @@ void Game::update()
 		tryViewMove();
 		moveView();
 		CantPushAfterStop();
-		level.updateEnemies();
+		updateEnemies();
 	}
 	this->pollEvents();
 }
@@ -807,9 +841,9 @@ void Game::render()
 		if (whichMenu == GameState::mainGame)
 		{
 		this->window->setView(view);
+		this->level.renderEnemies(this->window);
 		this->level.render(this->window);
 		this->player.render(this->window);
-		this->level.renderEnemies(this->window);
 		this->window->setView(hudView);
 		this->hud.render(this->window);
 		}
