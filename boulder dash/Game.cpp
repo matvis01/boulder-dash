@@ -535,6 +535,20 @@ void Game::tryMoveRockSideways()
 	}
 }
 
+bool Game::enemyCanGoDir(int i, bool enemyDir[4])
+{
+	if (level.tiles[level.enemies[i]->PosTile.x][level.enemies[i]->PosTile.y-1] == nullptr)
+		enemyDir[UP] = true;
+	if (level.tiles[level.enemies[i]->PosTile.x+1][level.enemies[i]->PosTile.y] == nullptr)
+		enemyDir[RIGHT] = true;
+	if (level.tiles[level.enemies[i]->PosTile.x][level.enemies[i]->PosTile.y+1] == nullptr)
+		enemyDir[DOWN] = true;
+	if (level.tiles[level.enemies[i]->PosTile.x-1][level.enemies[i]->PosTile.y] == nullptr)
+		enemyDir[LEFT] = true;
+
+	return enemyDir;
+}
+
 void Game::playerHit(int x,int y)
 {
 	player.playHitSound();
@@ -780,6 +794,7 @@ void Game::update()
 		tryViewMove();
 		moveView();
 		CantPushAfterStop();
+		level.updateEnemies();
 	}
 	this->pollEvents();
 }
@@ -794,6 +809,7 @@ void Game::render()
 		this->window->setView(view);
 		this->level.render(this->window);
 		this->player.render(this->window);
+		this->level.renderEnemies(this->window);
 		this->window->setView(hudView);
 		this->hud.render(this->window);
 		}

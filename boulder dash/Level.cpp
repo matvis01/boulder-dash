@@ -69,11 +69,11 @@ void Level::setupLevel()
 					tiles[x][y] = std::make_shared<Diamond>(x * 80.f + 40.f, y * 80.f + 40.f);
 					diamondsRequired++;
 				}
-				else if (line[i + 1] == 'e')
+				else if (line[i + 1] == 'f')
 				{
 					tiles[x][y] = std::make_shared<EndLvl>(x * 80.f + 40.f, y * 80.f + 40.f);
 				}
-				else if (line[i + 1] == 'g')
+				else if (line[i + 1] == ' ')
 				{
 					tiles[x][y] = std::make_shared<Ground>(x * 80.f + 40.f, y * 80.f + 40.f);
 				}
@@ -81,7 +81,11 @@ void Level::setupLevel()
 				{
 					tiles[x][y] = std::make_shared<Rock>(x * 80.f + 40.f, y * 80.f + 40.f);
 				}
-
+				else if (line[i + 1] == 'e')
+				{
+					tilePos pos = { x,y };
+					enemies.push_back(std::make_shared<Enemy>(pos));
+				}
 				x++;
 			}
 			
@@ -120,9 +124,63 @@ void Level::render(RenderTarget* target)
 	}
 }
 
+void Level::renderEnemies(RenderTarget* target)
+{
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		enemies[i]->render(target);
+	}
+}
+
+void Level::updateEnemies()
+{
+	bool b[4];
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		b[LEFT] = enemyCanGoLeft(i);
+		b[UP] = enemyCanGoUp(i);
+		b[DOWN] = enemyCanGoDown(i);
+		b[RIGHT] = enemyCanGoRight(i);
+		enemies[i]->update(b);
+	}
+}
+
+bool Level::enemyCanGoUp(int i)
+{
+	if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y - 1] == nullptr)
+		return true;
+	else
+		return false;
+}
+
+bool Level::enemyCanGoDown(int i)
+{
+	if (tiles[enemies[i]->PosTile.x][enemies[i]->PosTile.y + 1] == nullptr)
+		return true;
+	else
+		return false;
+}
+
+bool Level::enemyCanGoLeft(int i)
+{
+	if (tiles[enemies[i]->PosTile.x-1][enemies[i]->PosTile.y] == nullptr)
+		return true;
+	else
+		return false;
+}
+
+bool Level::enemyCanGoRight(int i)
+{
+	if (tiles[enemies[i]->PosTile.x+1][enemies[i]->PosTile.y] == nullptr)
+		return true;
+	else
+		return false;
+}
+
 void Level::clearLevel()
 {
 	allFallable.clear();
+	enemies.clear();
 
 	for (int i = 0; i < tiles.size()-1; i++)
 	{

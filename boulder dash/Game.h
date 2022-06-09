@@ -55,6 +55,8 @@ class Game
 	bool lastFellLeft;
 	void tryMoveRockSideways();
 
+	bool enemyCanGoDir(int ,bool enemyDir[4]);
+
 public:
 	Game();
 	~Game();

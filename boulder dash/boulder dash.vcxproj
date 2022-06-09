@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Diamond.cpp" />
     <ClCompile Include="EndLvl.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameTile.cpp" />
     <ClCompile Include="Ground.cpp" />
@@ -162,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="Diamond.h" />
     <ClInclude Include="EndLvl.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="functions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameTile.h" />
