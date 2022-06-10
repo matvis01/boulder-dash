@@ -93,6 +93,8 @@ void Level::setupLevel()
 		y++;
 	}
 
+	diamondsRequired -= 2;
+
 	/*mapSizeX = tiles[0].size();
 	mapSizeY = tiles.size();*/
 

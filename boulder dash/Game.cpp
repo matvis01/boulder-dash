@@ -585,7 +585,7 @@ void Game::findFallable()
 					{
 						if (level.tiles[x][y]->fallDown())
 						{
-							if (player.playerPosTile.x == x and player.playerPosTile.y == y + 2 and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+							if (player.playerPosTile.x == x and player.playerPosTile.y == y + 2 and level.tiles[x][y]->getIsMoving())
 							{
 								std::cout << "player dies 2!!!!!!!!!!!!!!!!!!!!! \n";
 								playerHit(x, y);
@@ -600,7 +600,7 @@ void Game::findFallable()
 							}
 						}
 					}
-					else if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
+					else if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getIsMoving())
 					{
 						std::cout << "player dies 1!!!!!!!!!!!!!!!!!!!!! \n";
 						playerHit(x, y);

@@ -37,7 +37,7 @@ Player::Player()
 	this->setUpSprite();
 	
 
-	if (!buffer1.loadFromFile("sounds\\auaua.wav"))
+	if (!buffer1.loadFromFile("sounds\\uff.wav"))
 	{
 		std::cout << "cant load hit sound";
 	}
