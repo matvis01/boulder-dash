@@ -249,7 +249,7 @@ void Game::moveView()
 
 void Game::tryViewMove()
 {
-	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y <  level.mapSizeY*80.f ) // dodac konce poziomu (and pos<costam.f)
+	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y <  (level.mapSizeY+1)*80.f ) // dodac konce poziomu (and pos<costam.f)
 	{
 		if (this->player.getPlayerPos().y - 3 * 80.f >= view.getCenter().y)
 		{
@@ -258,7 +258,7 @@ void Game::tryViewMove()
 			viewMoveDirection[DOWN] = true;
 			viewIsMoving = true;
 		}
-		if (this->player.getPlayerPos().y + 3 * 80.f <= view.getCenter().y)
+		if (this->player.getPlayerPos().y + 4 * 80.f <= view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y - 320.f;
 
@@ -266,7 +266,7 @@ void Game::tryViewMove()
 			viewIsMoving = true;
 		}
 	}
-	if(this->player.getPlayerPos().x > 400.f) // dodac konce poziomu 
+	if(this->player.getPlayerPos().x > 400.f and this->player.getPlayerPos().x < level.mapSizeX * 80.f) // dodac konce poziomu 
 	{
 		if (this->player.getPlayerPos().x - 4 * 80.f >= view.getCenter().x)
 		{
