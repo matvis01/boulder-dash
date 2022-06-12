@@ -251,14 +251,14 @@ void Game::tryViewMove()
 {
 	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y <  (level.mapSizeY+1)*80.f ) // dodac konce poziomu (and pos<costam.f)
 	{
-		if (this->player.getPlayerPos().y - 3 * 80.f >= view.getCenter().y)
+		if (this->player.getPlayerPos().y - 4 * 80.f >= view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y + 320.F;
 
 			viewMoveDirection[DOWN] = true;
 			viewIsMoving = true;
 		}
-		if (this->player.getPlayerPos().y + 4 * 80.f <= view.getCenter().y)
+		if (this->player.getPlayerPos().y + 3 * 80.f <= view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y - 320.f;
 
@@ -587,7 +587,6 @@ void Game::findFallable()
 						{
 							if (player.playerPosTile.x == x and player.playerPosTile.y == y + 2 and level.tiles[x][y]->getIsMoving())
 							{
-								std::cout << "player dies 2!!!!!!!!!!!!!!!!!!!!! \n";
 								playerHit(x, y);
 							}
 							else
@@ -602,7 +601,6 @@ void Game::findFallable()
 					}
 					else if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getIsMoving())
 					{
-						std::cout << "player dies 1!!!!!!!!!!!!!!!!!!!!! \n";
 						playerHit(x, y);
 					}
 				}
@@ -620,14 +618,12 @@ void Game::findFallable()
 									{
 										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// player dies
 										{// player on right
-											std::cout << "player dies  right 3!!!!!!!!!!!!!!!!!!!!! \n";
 											playerHit(x, y);
 										}
 										else if (level.tiles[x][y]->fallRight())
 										{
 											if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y] != nullptr and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock) // should player die
 											{
-												std::cout << "player dies right 4!!!!!!!!!!!!!!!!!!!!! \n";
 												playerHit(x, y);
 											}
 											else
@@ -647,14 +643,12 @@ void Game::findFallable()
 									{
 										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 										{ // player on left
-											std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
 											playerHit(x, y);
 										}
 										else if (level.tiles[x][y]->fallLeft())
 										{
 											if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 											{
-												std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
 												playerHit(x, y);
 											}
 											else
@@ -677,7 +671,6 @@ void Game::findFallable()
 									{
 										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
 										{
-											std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
 											playerHit(x, y);
 										}
 										else
@@ -696,14 +689,12 @@ void Game::findFallable()
 								{
 									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 									{ // player on left
-										std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
 										playerHit(x, y);
 									}
 									else if (level.tiles[x][y]->fallLeft())
 									{
 										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
 										{
-											std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
 											playerHit(x, y);
 										}
 										else
@@ -725,7 +716,6 @@ void Game::findFallable()
 								{
 									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
 									{
-										std::cout << "player dies left !!!!!!!!!!!!!!!!!!!!! \n";
 										playerHit(x, y);
 									}
 									else
@@ -742,7 +732,6 @@ void Game::findFallable()
 							}
 							else if (level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
 							{
-								std::cout << "player dies  left !!!!!!!!!!!!!!!!!!!!! \n";
 								playerHit(x, y);
 							}
 						}
@@ -750,7 +739,6 @@ void Game::findFallable()
 						{//only right free
 							if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// gracz umiera
 							{// player on right
-								std::cout << "player dies  right !!!!!!!!!!!!!!!!!!!!! \n";
 								playerHit(x, y);
 							}
 							else if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1))
@@ -759,7 +747,6 @@ void Game::findFallable()
 								{
 									if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
 									{
-										std::cout << "player dies right !!!!!!!!!!!!!!!!!!!!! \n";
 										playerHit(x, y);
 									}
 									else
