@@ -20,10 +20,7 @@ void Enemy::initVeriables()
 
 void Enemy::setUpSprite()
 {
-	if (!texture.loadFromFile("assets\\enemy.png"))
-	{
-		std::cout << "could not load player texture";
-	}
+	texture.loadFromFile("assets\\enemy.png");
 	sprite.setTexture(texture);
 	sprite.setTextureRect(source);
 	sprite.setOrigin(Vector2f(sizeX / 2.f, sizeY / 2.f));

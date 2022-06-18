@@ -481,7 +481,6 @@ void Game::playerOnGameTile()
 			}
 			else
 			{
-				std::cout << "game finished" << std::endl;
 				whichMenu = GameState::gameFinished;
 			}
 
@@ -536,7 +535,6 @@ void Game::tryMoveRockSideways()
 	}
 }
 
-
 void Game::playerHit(int x, int y)
 {
 	if (hud.heartsLeft > 1)
@@ -558,13 +556,15 @@ void Game::playerHit(int x, int y)
 
 void Game::findFallable()
 {
+	int px = player.playerPosTile.x;
+	int py = player.playerPosTile.y;
+
 	for (int v = 0; v < level.allFallable.size(); v++)
 	{
-		int y, x, px,py;
+		int y, x;
 		x = this->level.allFallable[v]->tilePosition.x;
 		y = this->level.allFallable[v]->tilePosition.y;
-		px = player.playerPosTile.x;
-		py = player.playerPosTile.y;
+
 		auto& thisTile = level.tiles[x][y];
 		auto& below = level.tiles[x][y + 1];
 		auto& left = level.tiles[x - 1][y];
@@ -589,6 +589,10 @@ void Game::findFallable()
 							}
 							else
 							{
+								if (level.tiles[x][y + 2] != nullptr)
+								{
+									sound.playRockFall();
+								}
 								thisTile->changeIsMoving();
 								thisTile->tilePosition.y = y + 1;
 								below = thisTile;
@@ -626,6 +630,10 @@ void Game::findFallable()
 											}
 											else
 											{
+												if (level.tiles[x][y + 2] != nullptr)
+												{
+													sound.playRockFall();
+												}
 												thisTile->changeIsMoving();
 												lastFellLeft = false;
 												thisTile->tilePosition.y = y + 1;
@@ -651,6 +659,10 @@ void Game::findFallable()
 											}
 											else
 											{
+												if (level.tiles[x][y + 2] != nullptr)
+												{
+													sound.playRockFall();
+												}
 												thisTile->changeIsMoving();
 												lastFellLeft = true;
 
@@ -673,6 +685,10 @@ void Game::findFallable()
 										}
 										else
 										{
+											if (level.tiles[x][y + 2] != nullptr)
+											{
+												sound.playRockFall();
+											}
 											thisTile->changeIsMoving();
 											lastFellLeft = false;
 											thisTile->tilePosition.x = x + 1;
@@ -697,6 +713,10 @@ void Game::findFallable()
 										}
 										else
 										{
+											if (level.tiles[x][y + 2] != nullptr)
+											{
+												sound.playRockFall();
+											}
 											thisTile->changeIsMoving();
 											lastFellLeft = true;
 											thisTile->tilePosition.x = x - 1;
@@ -718,6 +738,10 @@ void Game::findFallable()
 									}
 									else
 									{
+										if (level.tiles[x][y + 2] != nullptr)
+										{
+											sound.playRockFall();
+										}
 										thisTile->changeIsMoving();
 										lastFellLeft = true;
 										thisTile->tilePosition.x = x - 1;
@@ -749,6 +773,10 @@ void Game::findFallable()
 									}
 									else
 									{
+										if (level.tiles[x][y + 2] != nullptr)
+										{
+											sound.playRockFall();
+										}
 										thisTile->changeIsMoving();
 										lastFellLeft = false;
 										thisTile->tilePosition.x = x + 1;

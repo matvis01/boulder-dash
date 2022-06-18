@@ -2,8 +2,7 @@
 
 HUD::HUD()
 {
-	if (!font.loadFromFile("fonts/ARCADE_I.ttf"))
-		std::cout << ("could not load hud font");
+	font.loadFromFile("fonts/ARCADE_I.ttf");
 	diamondAmount.setFont(font);
 	diamondAmount.setCharacterSize(80);
 	diamondAmount.setString(toString(diamondsCollected) + "/" + toString(diamondsRequired));
@@ -12,14 +11,8 @@ HUD::HUD()
 	blackBar.setSize(Vector2f(1280.f, 80.f));
 	blackBar.setFillColor(Color::Black);
 
-	if (!textureRed.loadFromFile("assets\\heart.png"))
-	{
-		std::cout << "could not load h texture";
-	}
-	if (!textureGray.loadFromFile("assets\\heartempty.png"))
-	{
-		std::cout << "could not load he texture";
-	}
+	textureRed.loadFromFile("assets\\heart.png");
+	textureGray.loadFromFile("assets\\heartempty.png");
 	sprites[0].setTexture(textureRed);
 	sprites[1].setTexture(textureRed);
 	sprites[2].setTexture(textureRed);

@@ -14,13 +14,8 @@ Menu::Menu(RenderWindow *window, String s1, String s2)
 {
 	this->window = window;
 
-	if (!this->font.loadFromFile("fonts/ARCADE_I.ttf"))
-		std::cout << ("could not load menu font");
-
-	if (!texture.loadFromFile("assets\\menu.png"))
-	{
-		std::cout << "could not load tile texture";
-	}
+	this->font.loadFromFile("fonts/ARCADE_I.ttf");
+	texture.loadFromFile("assets\\menu.png");
 	sprite.setTexture(texture);
 
 	Text t;
@@ -46,13 +41,9 @@ Menu::Menu(RenderWindow* window, String s1, String s2, String s3)
 {
 	this->window = window;
 
-	if (!this->font.loadFromFile("fonts/ARCADE_I.ttf"))
-		std::cout << ("could not load menu font");
+	this->font.loadFromFile("fonts/ARCADE_I.ttf");
 
-	if (!texture.loadFromFile("assets\\menu.png"))
-	{
-		std::cout << "could not load tile texture";
-	}
+	texture.loadFromFile("assets\\menu.png");
 	sprite.setTexture(texture);
 
 	Text t;

@@ -20,10 +20,7 @@ void Player::initVeriables()
 
 void Player::setUpSprite()
 {
-	if (!texture.loadFromFile("assets\\character.png"))
-	{
-		std::cout << "could not load player texture";
-	}
+	texture.loadFromFile("assets\\character.png");
 	sprite.setTexture(texture);
 	sprite.setTextureRect(source);
 	sprite.setOrigin(Vector2f(sizeX/2.f, sizeY/2.f));
