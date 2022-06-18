@@ -20,7 +20,6 @@ Level::Level()
 
 Level::~Level()
 {
-
 }
 
 void Level::setupLevel()
@@ -33,14 +32,14 @@ void Level::setupLevel()
 
 	getline(inputfile, line);
 	istringstream(line) >> mapSizeX >> mapSizeY;
-	for (int i = 0; i < this->mapSizeX; i++)
-	{
-		std::vector <std::shared_ptr<GameTile>> temp;
 
-		for (int j = 0; j < this->mapSizeY; j++)
-		{
-			temp.push_back(nullptr);
-		}
+	std::vector <std::shared_ptr<GameTile>> temp;
+	for (int i = 0; i < this->mapSizeY; i++)
+	{
+		temp.push_back(nullptr);
+	}
+	for (int j = 0; j < this->mapSizeX; j++)
+	{
 		tiles.push_back(temp);
 	}
 
@@ -125,6 +124,8 @@ void Level::render(RenderTarget* target)
 		}
 	}
 }
+
+
 
 void Level::renderEnemies(RenderTarget* target)
 {

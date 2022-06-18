@@ -29,7 +29,7 @@ public:
 	//bool canGoDir[4];
 	float squareSize;
 	tilePos PosTile;
-
+	tilePos LastPosTile;
 	Enemy(tilePos);
 	~Enemy();
 

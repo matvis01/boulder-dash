@@ -16,7 +16,7 @@ Rock::~Rock()
 void Rock::SetupVariables()
 {
 	this->name = Name::rock;
-	this->textureFile =  "assets\\rock.png" ;
+	this->textureFile =  "assets\\rock3.png" ;
 	this->isPassable = 0;
 	this->isMoving = 0;
 	this->movable = 1;

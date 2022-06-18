@@ -3,6 +3,9 @@
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
 #include "SFML/Audio.hpp"
+#include <iostream>
+#include <vector>
+#include <string>
 
 enum class Name { rock, wall, ground, diamond, endlvl };
 

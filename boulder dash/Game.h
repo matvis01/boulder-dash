@@ -2,7 +2,7 @@
 #include "Level.h"
 #include "HUD.h"
 #include "Menu.h"
-
+#include "SoundBoard.h"
 using namespace sf;
 using namespace std;
 
@@ -13,6 +13,8 @@ class Game
 	View hudView;
 	VideoMode videoMode;
 	Event sfmlEvent;
+
+	SoundBoard sound;
 
 	bool viewIsMoving;
 	float viewNextSpotx, viewNextSpoty;
@@ -56,7 +58,6 @@ class Game
 	void tryMoveRockSideways();
 
 	void updateEnemies();
-	bool enemyCanGoDir(int ,bool enemyDir[4]);
 
 public:
 	Game();

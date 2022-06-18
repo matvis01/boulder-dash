@@ -25,7 +25,6 @@ class Player
 	Clock animationClock;
 	Clock standingClock;
 	Thread thr{ &Player::waitToStand,this };
-	SoundBuffer buffer1, buffer2;
 	
 
 public:
@@ -33,7 +32,6 @@ public:
 	bool direction[4];
 	bool movedLeft;
 	float squareSize;
-	Sound hitSound, dirtSound;
 
 	tilePos playerPosTile;
 	Vector2f getPlayerPos();
@@ -42,7 +40,7 @@ public:
 	~Player();
 
 	void waitToStand();
-	void playHitSound();
+	
 	void setPlayerPos(tilePos);
 	void updateInput(bool, bool, bool, bool);
 	void update(bool, bool, bool, bool);

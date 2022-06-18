@@ -50,6 +50,6 @@ EndLvl::~EndLvl()
 void EndLvl::SetupVariables()
 {
 	this->name = Name::endlvl;
-	this->textureFile = { "assets\\endlvl.png" };
+	this->textureFile = { "assets\\endlvl2.png" };
 	this->isPassable = 1;
 }

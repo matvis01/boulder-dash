@@ -1,11 +1,6 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <vector>
-#include "SFML/Graphics.hpp"
-#include "SFML/System.hpp"
-#include "SFML/Window.hpp"
-#include "SFML/Audio.hpp"
+#include "functions.h"
+
 
 using namespace sf;
 using namespace std;
@@ -19,9 +14,11 @@ class Menu
     Font font;
     vector<Text> text;
 
+    Texture texture;
+    Sprite sprite;
+
 public:
     int selectedButton = 0;
-    void update();
     void render();
 
     Menu(RenderWindow* window,String, String);
@@ -30,6 +27,5 @@ public:
 
     void MoveUp();
     void MoveDown();
-    void pollEvents();
 };
 

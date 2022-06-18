@@ -51,6 +51,6 @@ Wall::~Wall()
 void Wall::SetupVariables()
 {
 	this->name = Name::wall;
-	this->textureFile = { "assets\\wall.png" };
+	this->textureFile = { "assets\\wall5.png" };
 	this->isPassable = 0;
 }

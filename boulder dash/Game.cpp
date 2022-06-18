@@ -249,16 +249,16 @@ void Game::moveView()
 
 void Game::tryViewMove()
 {
-	if (this->player.getPlayerPos().y > 320.f and this->player.getPlayerPos().y <  (level.mapSizeY+1)*80.f ) // dodac konce poziomu (and pos<costam.f)
+	if (this->player.getPlayerPos().y > 5*80.f and this->player.getPlayerPos().y < (level.mapSizeY - 5)*80.f)
 	{
-		if (this->player.getPlayerPos().y - 4 * 80.f >= view.getCenter().y)
+		if (!viewIsMoving and this->player.getPlayerPos().y - 4 * 80.f > view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y + 320.F;
 
 			viewMoveDirection[DOWN] = true;
 			viewIsMoving = true;
 		}
-		if (this->player.getPlayerPos().y + 3 * 80.f <= view.getCenter().y)
+		if (!viewIsMoving and this->player.getPlayerPos().y + 3 * 80.f <=view.getCenter().y)
 		{
 			viewNextSpoty = view.getCenter().y - 320.f;
 
@@ -266,16 +266,16 @@ void Game::tryViewMove()
 			viewIsMoving = true;
 		}
 	}
-	if(this->player.getPlayerPos().x > 400.f and this->player.getPlayerPos().x < level.mapSizeX * 80.f) // dodac konce poziomu 
+	if (this->player.getPlayerPos().x > 5 * 80.f and this->player.getPlayerPos().x < (level.mapSizeX - 5) * 80.f)
 	{
-		if (this->player.getPlayerPos().x - 4 * 80.f >= view.getCenter().x)
+		if (!viewIsMoving and this->player.getPlayerPos().x - 4 * 80.f >= view.getCenter().x)
 		{
 			viewNextSpotx = view.getCenter().x + 400.f;
 
 			viewMoveDirection[RIGHT] = true;
 			viewIsMoving = true;
 		}
-		if (this->player.getPlayerPos().x + 4 * 80.f <= view.getCenter().x)
+		if (!viewIsMoving and this->player.getPlayerPos().x + 4 * 80.f <= view.getCenter().x)
 		{
 			viewNextSpotx = view.getCenter().x - 400.f;
 
@@ -454,11 +454,12 @@ void Game::playerOnGameTile()
 	{
 		if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::ground)
 		{
-			player.dirtSound.play();
+			sound.playGround();
 			this->level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
 		}
 		else if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->getName() == Name::diamond)
 		{
+			sound.playDiamond();
 			level.diamondsCollected += 1;
 			hud.diamondsCollected += 1;
 			hud.updateDiamondAmount();
@@ -535,230 +536,227 @@ void Game::tryMoveRockSideways()
 	}
 }
 
-bool Game::enemyCanGoDir(int i, bool enemyDir[4])
+
+void Game::playerHit(int x, int y)
 {
-	if (level.tiles[level.enemies[i]->PosTile.x][level.enemies[i]->PosTile.y-1] == nullptr)
-		enemyDir[UP] = true;
-	if (level.tiles[level.enemies[i]->PosTile.x+1][level.enemies[i]->PosTile.y] == nullptr)
-		enemyDir[RIGHT] = true;
-	if (level.tiles[level.enemies[i]->PosTile.x][level.enemies[i]->PosTile.y+1] == nullptr)
-		enemyDir[DOWN] = true;
-	if (level.tiles[level.enemies[i]->PosTile.x-1][level.enemies[i]->PosTile.y] == nullptr)
-		enemyDir[LEFT] = true;
-
-	return enemyDir;
-}
-
-void Game::playerHit(int x,int y)
-{
-	player.playHitSound();
-
 	if (hud.heartsLeft > 1)
 	{
+		sound.playHit();
 		hud.removeHeart();
 		hud.heartsLeft--;
-
 		if (level.tiles[x][y] != nullptr)
 		{
 			level.tiles[x][y] = nullptr;
 		}
 	}
 	else
+	{
+		sound.playdeath();
 		whichMenu = GameState::deathScreen;
+	}
 }
 
 void Game::findFallable()
 {
 	for (int v = 0; v < level.allFallable.size(); v++)
 	{
-		int y, x;
+		int y, x, px,py;
 		x = this->level.allFallable[v]->tilePosition.x;
 		y = this->level.allFallable[v]->tilePosition.y;
+		px = player.playerPosTile.x;
+		py = player.playerPosTile.y;
+		auto& thisTile = level.tiles[x][y];
+		auto& below = level.tiles[x][y + 1];
+		auto& left = level.tiles[x - 1][y];
+		auto& right = level.tiles[x + 1][y];
+		auto& leftDown = level.tiles[x - 1][y + 1];
+		auto& rightDown = level.tiles[x + 1][y + 1];
+		
 
 		if (x >= 0 and x < level.mapSizeX-1 and y >= 0 and y < level.mapSizeY-1)
 		{
-			if (level.tiles[x][y] != nullptr and !level.tiles[x][y]->getIsMovingSideways())
+			if (thisTile != nullptr and !thisTile->getIsMovingSideways())
 			{
-				if (level.tiles[x][y + 1] == nullptr) // falls down
+				if (below == nullptr) // falls down
 				{
-					if (!(player.playerPosTile.x == x and player.playerPosTile.y == y + 1))
+					if (!(px == x and py == y + 1))
 					{
-						if (level.tiles[x][y]->fallDown())
+						if (thisTile->fallDown())
 						{
-							if (player.playerPosTile.x == x and player.playerPosTile.y == y + 2 and level.tiles[x][y]->getIsMoving())
+							if (px == x and py == y + 2 and thisTile->getIsMoving())
 							{
 								playerHit(x, y);
 							}
 							else
 							{
-								level.tiles[x][y]->changeIsMoving();
-								level.tiles[x][y]->tilePosition.y = y + 1;
-								level.tiles[x][y + 1] = level.tiles[x][y];
-								level.tiles[x][y] = nullptr;
-								level.tiles[x][y + 1]->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+								thisTile->changeIsMoving();
+								thisTile->tilePosition.y = y + 1;
+								below = thisTile;
+								thisTile = nullptr;
+								below->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 							}
 						}
 					}
-					else if (player.playerPosTile.x == x and player.playerPosTile.y == y + 1 and level.tiles[x][y]->getIsMoving())
+					else if (px == x and py == y + 1 and thisTile->getIsMoving())
 					{
 						playerHit(x, y);
 					}
 				}
-				else if (level.tiles[x][y + 1] != nullptr and level.tiles[x][y + 1]->movable and !level.tiles[x][y + 1]->getIsMoving())
-				{
+				else if (below != nullptr and below->movable and !below->getIsMoving())
+				{// fallable on fallable
 					if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->movable and level.tiles[x][y - 1]->getIsMoving()) and !(y >= 1 and x >= 1 and level.tiles[x - 1][y - 1] != nullptr and level.tiles[x - 1][y - 1]->movable and level.tiles[x - 1][y - 1]->getIsMoving()) and !(y >= 1 and x < level.mapSizeX - 2 and level.tiles[x + 1][y - 1] != nullptr and level.tiles[x + 1][y - 1]->movable and level.tiles[x + 1][y - 1]->getIsMoving()))
-					{
-						if (x >= 1 and level.tiles[x - 1][y] == nullptr and level.tiles[x - 1][y + 1] == nullptr) // left free
-						{
-							if (x >= 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr) //right free
+					{//so it doest colide with falling next to it
+						if (x >= 1 and left == nullptr and leftDown == nullptr) // left free
+						{//left side free
+							if (right == nullptr and rightDown == nullptr) //right free
 							{// both sides free
-								if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and !(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1))
+								if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1) and !(px == x - 1 and py == y or px == x - 1 and py == y + 1))
 								{// player not blocking left or right
 									if (lastFellLeft) // falls right
 									{
-										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// player dies
+										if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)// player dies
 										{// player on right
 											playerHit(x, y);
 										}
-										else if (level.tiles[x][y]->fallRight())
+										else if (thisTile->fallRight())
 										{
-											if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y] != nullptr and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock) // should player die
+											if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile != nullptr and thisTile->getIsMoving() and thisTile->getName() == Name::rock) // should player die
 											{
 												playerHit(x, y);
 											}
 											else
 											{
-												level.tiles[x][y]->changeIsMoving();
+												thisTile->changeIsMoving();
 												lastFellLeft = false;
-												level.tiles[x][y]->tilePosition.y = y + 1;
-												level.tiles[x][y]->tilePosition.x = x + 1;
-												level.tiles[x + 1][y + 1] = level.tiles[x][y];
-												level.tiles[x][y] = nullptr;
-												level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+												thisTile->tilePosition.y = y + 1;
+												thisTile->tilePosition.x = x + 1;
+												rightDown = thisTile;
+												thisTile = nullptr;
+												rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 											}
 										}
 
 									}
 									else // falls left
 									{
-										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+										if ((px == x - 1 and py == y or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 										{ // player on left
 											playerHit(x, y);
 										}
-										else if (level.tiles[x][y]->fallLeft())
+										else if (thisTile->fallLeft())
 										{
-											if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+											if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 											{
 												playerHit(x, y);
 											}
 											else
 											{
-												level.tiles[x][y]->changeIsMoving();
+												thisTile->changeIsMoving();
 												lastFellLeft = true;
 
-												level.tiles[x][y]->tilePosition.x = x - 1;
-												level.tiles[x][y]->tilePosition.y = y + 1;
-												level.tiles[x - 1][y + 1] = level.tiles[x][y];
-												level.tiles[x][y] = nullptr;
-												level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+												thisTile->tilePosition.x = x - 1;
+												thisTile->tilePosition.y = y + 1;
+												leftDown = thisTile;
+												thisTile = nullptr;
+												leftDown->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 											}
 										}
 									}
 								}
-								else if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1))
+								else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
 								{ // player is not on right
-									if (level.tiles[x][y]->fallRight())
+									if (thisTile->fallRight())
 									{
-										if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
+										if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving()) // should player die
 										{
 											playerHit(x, y);
 										}
 										else
 										{
-											level.tiles[x][y]->changeIsMoving();
+											thisTile->changeIsMoving();
 											lastFellLeft = false;
-											level.tiles[x][y]->tilePosition.x = x + 1;
-											level.tiles[x][y]->tilePosition.y = y + 1;
-											level.tiles[x + 1][y + 1] = level.tiles[x][y];
-											level.tiles[x][y] = nullptr;
-											level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+											thisTile->tilePosition.x = x + 1;
+											thisTile->tilePosition.y = y + 1;
+											rightDown = thisTile;
+											thisTile = nullptr;
+											rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 										}
 									}
 								}
-								else if (!(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1)) // player not blocking left
-								{
-									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+								else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1)) // player not blocking left
+								{//player is not on the left
+									if ((px == x - 1 and py == y or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 									{ // player on left
 										playerHit(x, y);
 									}
-									else if (level.tiles[x][y]->fallLeft())
+									else if (thisTile->fallLeft())
 									{
-										if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
+										if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
 										{
 											playerHit(x, y);
 										}
 										else
 										{
-											level.tiles[x][y]->changeIsMoving();
+											thisTile->changeIsMoving();
 											lastFellLeft = true;
-											level.tiles[x][y]->tilePosition.x = x - 1;
-											level.tiles[x][y]->tilePosition.y = y + 1;
-											level.tiles[x - 1][y + 1] = level.tiles[x][y];
-											level.tiles[x][y] = nullptr;
-											level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+											thisTile->tilePosition.x = x - 1;
+											thisTile->tilePosition.y = y + 1;
+											leftDown = thisTile;
+											thisTile = nullptr;
+											leftDown->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 										}
 									}
 								}
 							}
-							else if (!(player.playerPosTile.x == x - 1 and player.playerPosTile.y == y or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1)) // player not blocking left
-							{
-								if (level.tiles[x][y]->fallLeft())
+							else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1))
+							{// player not blocking left
+								if (thisTile->fallLeft())
 								{
-									if ((player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x - 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving())
+									if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
 									{
 										playerHit(x, y);
 									}
 									else
 									{
-										level.tiles[x][y]->changeIsMoving();
+										thisTile->changeIsMoving();
 										lastFellLeft = true;
-										level.tiles[x][y]->tilePosition.x = x - 1;
-										level.tiles[x][y]->tilePosition.y = y + 1;
-										level.tiles[x - 1][y + 1] = level.tiles[x][y];
-										level.tiles[x][y] = nullptr;
-										level.tiles[x - 1][y + 1]->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+										thisTile->tilePosition.x = x - 1;
+										thisTile->tilePosition.y = y + 1;
+										leftDown = thisTile;
+										thisTile = nullptr;
+										leftDown->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 									}
 								}
 							}
-							else if (level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)
+							else if (thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 							{
 								playerHit(x, y);
 							}
 						}
-						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and level.tiles[x + 1][y] == nullptr and level.tiles[x + 1][y + 1] == nullptr)
+						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and right == nullptr and rightDown == nullptr)
 						{//only right free
-							if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getIsMoving() and level.tiles[x][y]->getName() == Name::rock)// gracz umiera
+							if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 							{// player on right
 								playerHit(x, y);
 							}
-							else if (!(player.playerPosTile.x == x + 1 and player.playerPosTile.y == y or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1))
-							{
-								if (level.tiles[x][y]->fallRight())
+							else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
+							{// player not on right
+								if (thisTile->fallRight())
 								{
-									if ((player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 2 or player.playerPosTile.x == x + 1 and player.playerPosTile.y == y + 1) and level.tiles[x][y]->getName() == Name::rock and level.tiles[x][y]->getIsMoving()) // should player die
+									if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
 									{
 										playerHit(x, y);
 									}
 									else
 									{
-										level.tiles[x][y]->changeIsMoving();
+										thisTile->changeIsMoving();
 										lastFellLeft = false;
-										level.tiles[x][y]->tilePosition.x = x + 1;
-										level.tiles[x][y]->tilePosition.y = y + 1;
+										thisTile->tilePosition.x = x + 1;
+										thisTile->tilePosition.y = y + 1;
 
-										level.tiles[x + 1][y + 1] = level.tiles[x][y];
-										level.tiles[x][y] = nullptr;
-										level.tiles[x + 1][y + 1]->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+										rightDown = thisTile;
+										thisTile = nullptr;
+										rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 									}
 								}
 							}
@@ -783,8 +781,9 @@ void Game::updateEnemies()
 			b[RIGHT] = level.enemyCanGoRight(i);
 			level.enemies[i]->update(b);
 
-			if (level.enemies[i]->PosTile.x == player.playerPosTile.x and level.enemies[i]->PosTile.y == player.playerPosTile.y)
+			if (level.enemies[i]->LastPosTile.x == player.playerPosTile.x and level.enemies[i]->LastPosTile.y == player.playerPosTile.y)
 			{
+				sound.playSpiderAttack();
 				level.enemies[i] = nullptr;
 				playerHit(player.playerPosTile.x, player.playerPosTile.y);
 			}
@@ -796,6 +795,12 @@ void Game::updateEnemies()
 				{
 					if (level.allFallable[j]->tilePosition.x == level.enemies[i]->PosTile.x and level.allFallable[j]->tilePosition.y == level.enemies[i]->PosTile.y)
 					{
+						sound.playSpiderDie();
+						level.enemies[i] = nullptr;
+					}
+					else if (level.allFallable[j]->tilePosition.x == level.enemies[i]->LastPosTile.x and level.allFallable[j]->tilePosition.y == level.enemies[i]->LastPosTile.y)
+					{
+						sound.playSpiderDie();
 						level.enemies[i] = nullptr;
 					}
 				}

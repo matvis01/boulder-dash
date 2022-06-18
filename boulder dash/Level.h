@@ -30,7 +30,7 @@ public:
 	fs::path levelsPath = "./levels/";
 	vector<fs::path> allPaths;
 
-	vector<std::vector<std::shared_ptr<GameTile>>> tiles;
+	vector <std::vector<std::shared_ptr<GameTile>>> tiles;
 	vector <std::shared_ptr<GameTile>> allFallable;
 	vector <std::shared_ptr<Enemy>> enemies;
 	int diamondsRequired = 1;

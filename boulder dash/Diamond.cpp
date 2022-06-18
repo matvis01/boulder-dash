@@ -16,7 +16,7 @@ Diamond::~Diamond()
 void Diamond::SetupVariables()
 {
 	this->name = Name::diamond;
-	this->textureFile = "assets\\diamond.png";
+	this->textureFile = "assets\\diamond2.png";
 	this->isPassable = 1;
 	this->isMoving = 0;
 	this->movable = 1;

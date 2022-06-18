@@ -50,6 +50,6 @@ Ground::~Ground()
 void Ground::SetupVariables()
 {
 	this->name = Name::ground;
-	this->textureFile = { "assets\\ground.png" };
+	this->textureFile = { "assets\\dirt3.png" };
 	this->isPassable = 1;
 }

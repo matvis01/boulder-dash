@@ -36,20 +36,6 @@ Player::Player()
 	this->initVeriables();
 	this->setUpSprite();
 	
-
-	if (!buffer1.loadFromFile("sounds\\uff.wav"))
-	{
-		std::cout << "cant load hit sound";
-	}
-	hitSound.setBuffer(buffer1);
-	hitSound.setVolume(70.f);
-	
-	if (!buffer2.loadFromFile("sounds\\dirt.wav"))
-	{
-		std::cout << "cant load hit sound";
-	}
-	dirtSound.setBuffer(buffer2);
-	
 }
 
 Vector2f Player::getPlayerPos()
@@ -269,11 +255,6 @@ void Player::setPlayerPos(tilePos startingPos)
 	playerPosTile = startingPos;
 	playerPos = Vector2f(startingPos.x * 80.f + 40.f, startingPos.y * 80.f + 40.f);
 	sprite.setPosition(playerPos);
-}
-
-void Player::playHitSound()
-{
-	hitSound.play();
 }
 
 void Player::update(bool canMoveLeft, bool canMoveRight, bool canMoveDown, bool canMoveUp)

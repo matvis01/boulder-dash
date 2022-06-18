@@ -159,6 +159,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rock.cpp" />
+    <ClCompile Include="SoundBoard.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rock.h" />
+    <ClInclude Include="SoundBoard.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
