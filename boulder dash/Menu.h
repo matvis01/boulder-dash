@@ -1,7 +1,6 @@
 #pragma once
 #include "functions.h"
 
-
 using namespace sf;
 using namespace std;
 

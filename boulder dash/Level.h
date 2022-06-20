@@ -5,7 +5,6 @@
 #include <regex>
 #include <sstream>
 #include <fstream>
-#include "functions.h"
 #include "Player.h"
 #include "GameTile.h"
 #include <vector>
@@ -15,6 +14,7 @@
 #include "Diamond.h"
 #include "EndLvl.h"
 #include "Enemy.h"
+#include "functions.h"
 
 namespace fs = std::filesystem;
 using namespace std;

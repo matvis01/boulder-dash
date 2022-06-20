@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include "functions.h"
 
@@ -25,6 +24,7 @@ class Player
 	Clock animationClock;
 	Clock standingClock;
 	Thread thr{ &Player::waitToStand,this };
+	
 	
 
 public:

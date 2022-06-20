@@ -1,8 +1,10 @@
 #pragma once
+
 #include "Level.h"
 #include "HUD.h"
 #include "Menu.h"
 #include "SoundBoard.h"
+
 using namespace sf;
 using namespace std;
 
@@ -31,8 +33,8 @@ class Game
 	void chooseFirstScreen();
 
 	Clock clock;
-	bool canPush = false;
-	bool waiting = false;
+	atomic <bool> canPush = false;
+	atomic <bool> waiting = false;
 	void canPushtoTrue();
 	Thread threadToTrue{ &Game::canPushtoTrue,this };
 	void CantPushAfterStop();

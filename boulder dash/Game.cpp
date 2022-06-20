@@ -80,7 +80,8 @@ bool Game::canMoveLeft()
 	{
 		if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] != nullptr)
 		{
-			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x-1 ][player.playerPosTile.y+1] != nullptr)
+			if (player.playerPosTile.x >= 2 and this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getName() == Name::rock and 
+				this->level.tiles[player.playerPosTile.x - 2][player.playerPosTile.y] == nullptr and this->level.tiles[player.playerPosTile.x-1 ][player.playerPosTile.y+1] != nullptr)
 			{// single rock on left
 				if (this->level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y]->getIsMoving())
 					return false;
@@ -306,7 +307,6 @@ const bool Game::running() const
 
 Game::~Game()
 {
-	
 	for (int i = 0; i < menus.size(); i++)
 	{
 		delete this->menus[i];
@@ -512,11 +512,11 @@ void Game::tryMoveRockSideways()
 				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(true, player.getPlayerSpeed()))
 				{
 					clock.restart();
-					//threadToFalse.launch();
 					canPush = true;
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x -= 1;
 					level.tiles[player.playerPosTile.x - 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y] = nullptr;
+
 				}
 			}
 			else//player moves right
@@ -524,7 +524,6 @@ void Game::tryMoveRockSideways()
 				if (level.tiles[player.playerPosTile.x][player.playerPosTile.y]->moveSideways(false, player.getPlayerSpeed()))
 				{
 					clock.restart();
-					/*threadToFalse.launch();*/
 					canPush = true;
 					level.tiles[player.playerPosTile.x][player.playerPosTile.y]->tilePosition.x += 1;
 					level.tiles[player.playerPosTile.x + 1][player.playerPosTile.y] = level.tiles[player.playerPosTile.x][player.playerPosTile.y];
@@ -841,6 +840,7 @@ void Game::update()
 {
 	if (whichMenu == GameState::mainGame)
 	{
+		
 		findFallable();
 		this->player.update(canMoveLeft(), canMoveRight(), canMoveDown(), canMoveUp());
 		playerOnGameTile();
