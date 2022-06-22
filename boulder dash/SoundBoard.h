@@ -1,5 +1,6 @@
 #pragma once
 #include "functions.h"
+#include "SFML/Audio.hpp"
 
 using namespace sf;
 

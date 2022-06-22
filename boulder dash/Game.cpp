@@ -570,115 +570,57 @@ void Game::findFallable()
 		auto& right = level.tiles[x + 1][y];
 		auto& leftDown = level.tiles[x - 1][y + 1];
 		auto& rightDown = level.tiles[x + 1][y + 1];
-		
 
-		if (x >= 0 and x < level.mapSizeX-1 and y >= 0 and y < level.mapSizeY-1)
+		if (thisTile != nullptr and !thisTile->getIsMovingSideways())
 		{
-			if (thisTile != nullptr and !thisTile->getIsMovingSideways())
+			if (below == nullptr) // falls down
 			{
-				if (below == nullptr) // falls down
+				if (!(px == x and py == y + 1))
 				{
-					if (!(px == x and py == y + 1))
+					if (thisTile->fallDown())
 					{
-						if (thisTile->fallDown())
+						if (px == x and py == y + 2 and thisTile->getIsMoving())
 						{
-							if (px == x and py == y + 2 and thisTile->getIsMoving())
+							playerHit(x, y);
+						}
+						else
+						{
+							if (level.tiles[x][y + 2] != nullptr)
 							{
-								playerHit(x, y);
+								sound.playRockFall();
 							}
-							else
-							{
-								if (level.tiles[x][y + 2] != nullptr)
-								{
-									sound.playRockFall();
-								}
-								thisTile->changeIsMoving();
-								thisTile->tilePosition.y = y + 1;
-								below = thisTile;
-								thisTile = nullptr;
-								below->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
-							}
+							thisTile->changeIsMoving();
+							thisTile->tilePosition.y = y + 1;
+							below = thisTile;
+							thisTile = nullptr;
+							below->setSpritePos({ x * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 						}
 					}
-					else if (px == x and py == y + 1 and thisTile->getIsMoving())
-					{
-						playerHit(x, y);
-					}
 				}
-				else if (below != nullptr and below->movable and !below->getIsMoving())
-				{// fallable on fallable
-					if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->movable and level.tiles[x][y - 1]->getIsMoving()) and !(y >= 1 and x >= 1 and level.tiles[x - 1][y - 1] != nullptr and level.tiles[x - 1][y - 1]->movable and level.tiles[x - 1][y - 1]->getIsMoving()) and !(y >= 1 and x < level.mapSizeX - 2 and level.tiles[x + 1][y - 1] != nullptr and level.tiles[x + 1][y - 1]->movable and level.tiles[x + 1][y - 1]->getIsMoving()))
-					{//so it doest colide with falling next to it
-						if (x >= 1 and left == nullptr and leftDown == nullptr) // left free
-						{//left side free
-							if (right == nullptr and rightDown == nullptr) //right free
-							{// both sides free
-								if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1) and !(px == x - 1 and py == y or px == x - 1 and py == y + 1))
-								{// player not blocking left or right
-									if (lastFellLeft) // falls right
-									{
-										if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)// player dies
-										{// player on right
-											playerHit(x, y);
-										}
-										else if (thisTile->fallRight())
-										{
-											if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile != nullptr and thisTile->getIsMoving() and thisTile->getName() == Name::rock) // should player die
-											{
-												playerHit(x, y);
-											}
-											else
-											{
-												if (level.tiles[x][y + 2] != nullptr)
-												{
-													sound.playRockFall();
-												}
-												thisTile->changeIsMoving();
-												lastFellLeft = false;
-												thisTile->tilePosition.y = y + 1;
-												thisTile->tilePosition.x = x + 1;
-												rightDown = thisTile;
-												thisTile = nullptr;
-												rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
-											}
-										}
-
+				else if (px == x and py == y + 1 and thisTile->getIsMoving())
+				{
+					playerHit(x, y);
+				}
+			}
+			else if (below != nullptr and below->movable and !below->getIsMoving())
+			{// fallable on fallable
+				if (!(y >= 1 and level.tiles[x][y - 1] != nullptr and level.tiles[x][y - 1]->movable and level.tiles[x][y - 1]->getIsMoving()) and !(y >= 1 and x >= 1 and level.tiles[x - 1][y - 1] != nullptr and level.tiles[x - 1][y - 1]->movable and level.tiles[x - 1][y - 1]->getIsMoving()) and !(y >= 1 and x < level.mapSizeX - 2 and level.tiles[x + 1][y - 1] != nullptr and level.tiles[x + 1][y - 1]->movable and level.tiles[x + 1][y - 1]->getIsMoving()))
+				{//so it doest colide with falling next to it
+					if (x >= 1 and left == nullptr and leftDown == nullptr) // left free
+					{//left side free
+						if (right == nullptr and rightDown == nullptr) //right free
+						{// both sides free
+							if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1) and !(px == x - 1 and py == y or px == x - 1 and py == y + 1))
+							{// player not blocking left or right
+								if (lastFellLeft) // falls right
+								{
+									if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)// player dies
+									{// player on right
+										playerHit(x, y);
 									}
-									else // falls left
+									else if (thisTile->fallRight())
 									{
-										if ((px == x - 1 and py == y or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
-										{ // player on left
-											playerHit(x, y);
-										}
-										else if (thisTile->fallLeft())
-										{
-											if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
-											{
-												playerHit(x, y);
-											}
-											else
-											{
-												if (level.tiles[x][y + 2] != nullptr)
-												{
-													sound.playRockFall();
-												}
-												thisTile->changeIsMoving();
-												lastFellLeft = true;
-
-												thisTile->tilePosition.x = x - 1;
-												thisTile->tilePosition.y = y + 1;
-												leftDown = thisTile;
-												thisTile = nullptr;
-												leftDown->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
-											}
-										}
-									}
-								}
-								else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
-								{ // player is not on right
-									if (thisTile->fallRight())
-									{
-										if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving()) // should player die
+										if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile != nullptr and thisTile->getIsMoving() and thisTile->getName() == Name::rock) // should player die
 										{
 											playerHit(x, y);
 										}
@@ -690,23 +632,24 @@ void Game::findFallable()
 											}
 											thisTile->changeIsMoving();
 											lastFellLeft = false;
-											thisTile->tilePosition.x = x + 1;
 											thisTile->tilePosition.y = y + 1;
+											thisTile->tilePosition.x = x + 1;
 											rightDown = thisTile;
 											thisTile = nullptr;
 											rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 										}
 									}
+
 								}
-								else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1)) // player not blocking left
-								{//player is not on the left
+								else // falls left
+								{
 									if ((px == x - 1 and py == y or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 									{ // player on left
 										playerHit(x, y);
 									}
 									else if (thisTile->fallLeft())
 									{
-										if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
+										if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
 										{
 											playerHit(x, y);
 										}
@@ -718,6 +661,7 @@ void Game::findFallable()
 											}
 											thisTile->changeIsMoving();
 											lastFellLeft = true;
+
 											thisTile->tilePosition.x = x - 1;
 											thisTile->tilePosition.y = y + 1;
 											leftDown = thisTile;
@@ -727,9 +671,37 @@ void Game::findFallable()
 									}
 								}
 							}
-							else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1))
-							{// player not blocking left
-								if (thisTile->fallLeft())
+							else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
+							{ // player is not on right
+								if (thisTile->fallRight())
+								{
+									if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving()) // should player die
+									{
+										playerHit(x, y);
+									}
+									else
+									{
+										if (level.tiles[x][y + 2] != nullptr)
+										{
+											sound.playRockFall();
+										}
+										thisTile->changeIsMoving();
+										lastFellLeft = false;
+										thisTile->tilePosition.x = x + 1;
+										thisTile->tilePosition.y = y + 1;
+										rightDown = thisTile;
+										thisTile = nullptr;
+										rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+									}
+								}
+							}
+							else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1)) // player not blocking left
+							{//player is not on the left
+								if ((px == x - 1 and py == y or px == x - 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
+								{ // player on left
+									playerHit(x, y);
+								}
+								else if (thisTile->fallLeft())
 								{
 									if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
 									{
@@ -751,40 +723,64 @@ void Game::findFallable()
 									}
 								}
 							}
-							else if (thisTile->getIsMoving() and thisTile->getName() == Name::rock)
+						}
+						else if (!(px == x - 1 and py == y or px == x - 1 and py == y + 1))
+						{// player not blocking left
+							if (thisTile->fallLeft())
 							{
-								playerHit(x, y);
+								if ((px == x - 1 and py == y + 2 or px == x - 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
+								{
+									playerHit(x, y);
+								}
+								else
+								{
+									if (level.tiles[x][y + 2] != nullptr)
+									{
+										sound.playRockFall();
+									}
+									thisTile->changeIsMoving();
+									lastFellLeft = true;
+									thisTile->tilePosition.x = x - 1;
+									thisTile->tilePosition.y = y + 1;
+									leftDown = thisTile;
+									thisTile = nullptr;
+									leftDown->setSpritePos({ (x - 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
+								}
 							}
 						}
-						else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and right == nullptr and rightDown == nullptr)
-						{//only right free
-							if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
-							{// player on right
-								playerHit(x, y);
-							}
-							else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
-							{// player not on right
-								if (thisTile->fallRight())
+						else if (thisTile->getIsMoving() and thisTile->getName() == Name::rock)
+						{
+							playerHit(x, y);
+						}
+					}
+					else if (x < level.mapSizeX - 1 and y < level.mapSizeY - 1 and right == nullptr and rightDown == nullptr)
+					{//only right free
+						if ((px == x + 1 and py == y or px == x + 1 and py == y + 1) and thisTile->getIsMoving() and thisTile->getName() == Name::rock)
+						{// player on right
+							playerHit(x, y);
+						}
+						else if (!(px == x + 1 and py == y or px == x + 1 and py == y + 1))
+						{// player not on right
+							if (thisTile->fallRight())
+							{
+								if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
 								{
-									if ((px == x + 1 and py == y + 2 or px == x + 1 and py == y + 1) and thisTile->getName() == Name::rock and thisTile->getIsMoving())
+									playerHit(x, y);
+								}
+								else
+								{
+									if (level.tiles[x][y + 2] != nullptr)
 									{
-										playerHit(x, y);
+										sound.playRockFall();
 									}
-									else
-									{
-										if (level.tiles[x][y + 2] != nullptr)
-										{
-											sound.playRockFall();
-										}
-										thisTile->changeIsMoving();
-										lastFellLeft = false;
-										thisTile->tilePosition.x = x + 1;
-										thisTile->tilePosition.y = y + 1;
+									thisTile->changeIsMoving();
+									lastFellLeft = false;
+									thisTile->tilePosition.x = x + 1;
+									thisTile->tilePosition.y = y + 1;
 
-										rightDown = thisTile;
-										thisTile = nullptr;
-										rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
-									}
+									rightDown = thisTile;
+									thisTile = nullptr;
+									rightDown->setSpritePos({ (x + 1) * 80.f + 40.f, (y + 1) * 80.f + 40.f });
 								}
 							}
 						}

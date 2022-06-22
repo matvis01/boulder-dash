@@ -1,13 +1,11 @@
 #pragma once
-#include <iostream>
 #include <filesystem>
 #include <string>
 #include <regex>
 #include <sstream>
 #include <fstream>
-#include "Player.h"
+//#include "Player.h"
 #include "GameTile.h"
-#include <vector>
 #include "Wall.h"
 #include "Ground.h"
 #include "Rock.h"
